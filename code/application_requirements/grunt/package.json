@@ -1,0 +1,37 @@
+{
+  "name": "grunt",
+  "description": "The best project ever.",
+  "version": "0.1.0",
+  "homepage": "",
+  "author": {
+    "name": "Jim Schubert",
+    "email": "james.schubert@gmail.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "ssh://git@bitbucket.org/jimschubert/yfa-node-leanpub.git"
+  },
+  "bugs": {
+    "url": ""
+  },
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "/blob/master/LICENSE-MIT"
+    }
+  ],
+  "main": "lib/grunt",
+  "engines": {
+    "node": ">= 0.8.0"
+  },
+  "scripts": {
+    "test": "grunt nodeunit"
+  },
+  "devDependencies": {
+    "grunt-contrib-jshint": "~0.1.1",
+    "grunt-contrib-nodeunit": "~0.1.2",
+    "grunt-contrib-watch": "~0.2.0",
+    "grunt": "~0.4.1"
+  },
+  "keywords": []
+}
