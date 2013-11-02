@@ -1,0 +1,19 @@
+/* ==========================================================================
+   Author's custom styles
+   ========================================================================== */
+body {
+    position: relative;
+    padding-top: 60px;
+    font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+
+a {
+    color: #00B7FF;
+}
+
+
+@media (min-width: 10px) and (max-width: 979px) {
+ body {
+     padding-top:0px;
+ }
+}

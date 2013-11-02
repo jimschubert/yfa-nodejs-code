@@ -1,0 +1,55 @@
+### Node.js
+### https://github.com/github/gitignore/blob/master/Node.gitignore
+lib-cov
+*.seed
+*.log
+*.csv
+*.dat
+*.out
+*.pid
+*.gz
+
+pids
+logs
+results
+
+npm-debug.log
+node_modules
+
+### Linux
+### https://github.com/github/gitignore/blob/master/Global/Linux.gitignore
+.*
+!.gitignore
+*~
+
+### OSX
+### https://github.com/github/gitignore/blob/master/Global/OSX.gitignore
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+
+# Thumbnails
+._*
+
+# Files that might appear on external disk
+.Spotlight-V100
+.Trashes
+
+### SublimeText
+### https://github.com/github/gitignore/blob/master/Global/SublimeText.gitignore
+# SublimeText project files
+*.sublime-workspace
+
+### vim
+### https://github.com/github/gitignore/blob/master/Global/vim.gitignore
+.*.s[a-w][a-z]
+*.un~
+Session.vim
+.netrwhist
+*~
+
+### Project-specific
+coverage
+!.jshintrc
+

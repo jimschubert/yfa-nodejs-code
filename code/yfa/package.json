@@ -1,0 +1,59 @@
+{
+  "name": "yfa-nodejs",
+  "description": "Example application for your first application in node.js",
+  "version": "0.1.0",
+  "private": true,
+  "homepage": "",
+  "author": {
+    "name": "Jim Schubert",
+    "email": "james.schubert@gmail.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git:github.com/jimschubert/yfa-nodejs-code.git"
+  },
+  "bugs": {
+    "url": ""
+  },
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "/blob/master/LICENSE-MIT"
+    }
+  ],
+  "main": "src",
+  "engines": {
+    "node": ">= 0.10.0"
+  },
+  "scripts": {
+    "start": "node src/app.js",
+    "test": "grunt test"
+  },
+  "devDependencies": {
+    "grunt-contrib-jshint": "~0.1.1",
+    "grunt-contrib-nodeunit": "~0.1.2",
+    "grunt-contrib-watch": "~0.2.0",
+    "grunt": "~0.4.1",
+    "grunt-karma": "~0.6.2",
+    "grunt-express": "~1.0.0-beta2",
+    "grunt-env": "~0.4.0",
+    "grunt-mocha-cli": "~1.0.6",
+    "karma-script-launcher": "~0.1.0",
+    "karma-chrome-launcher": "~0.1.0",
+    "karma-firefox-launcher": "~0.1.0",
+    "karma-html2js-preprocessor": "~0.1.0",
+    "karma-phantomjs-launcher": "~0.1.0",
+    "karma": "~0.10.1",
+    "karma-coverage": "~0.1.0",
+    "mocha": "~1.12.1",
+    "karma-mocha": "~0.1.0",
+    "karma-chai": "0.0.1",
+    "karma-ng-scenario": "~0.1.0"
+  },
+  "dependencies": {
+    "express": "3.2.6",
+    "jade": "*",
+    "jasmine-node": "~1.10.1"
+  },
+  "keywords": []
+}
