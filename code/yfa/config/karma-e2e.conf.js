@@ -9,7 +9,7 @@ module.exports = function (config) {
 
         // list of files / patterns to load in the browser
         files     : [
-            'test/e2e/**/*.js'
+            'test/client/e2e/**/*.js'
         ],
 
         // list of files to exclude
@@ -37,7 +37,7 @@ module.exports = function (config) {
 
         // level of logging
         // possible values: LOG_DISABLE || LOG_ERROR || LOG_WARN || LOG_INFO || LOG_DEBUG
-        logLevel      : config.DEBUG,
+        logLevel      : config.LOG_INFO,
 
         // enable / disable watching file and executing tests whenever any file changes
         autoWatch     : true,

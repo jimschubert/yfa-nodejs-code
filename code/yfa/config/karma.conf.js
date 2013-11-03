@@ -15,13 +15,13 @@ module.exports = function (config) {
             'src/public/javascripts/vendor/jquery-1.9.1.min.js',
             'src/public/javascripts/vendor/angular/angular.js',
             'src/public/javascripts/vendor/angular/angular-*.js',
-            'test/lib/angular/angular-mocks.js',
+            'test/client/lib/angular/angular-mocks.js',
             'src/public/javascripts/vendor/bootstrap.min.js',
             'src/public/javascripts/vendor/modernizr-*.min.js',
             'src/public/javascripts/vendor/ui-bootstrap-0.4.0.min.js',
             'src/public/javascripts/vendor/ui-bootstrap-tpls-0.4.0.min.js',
             'src/public/javascripts/**/*.js',
-            'test/unit/**/*.js'
+            'test/client/unit/**/*.js'
         ],
 
         exclude: [

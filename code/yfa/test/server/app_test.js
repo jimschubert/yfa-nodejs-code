@@ -1,6 +1,6 @@
 'use strict';
 
-var app = require('../src/app.js').app;
+var app = require('../../src/app.js').app;
 var assert = require('assert');
 
 describe('app', function(){
