@@ -4,7 +4,7 @@ var async = require('async');
 var options = {
   db: { native_parser: true },
   server: { poolSize: 5 },
-  keeyAlive: true
+  keepAlive: true
 };
 mongoose.connect('mongodb://localhost/test', options);
 
