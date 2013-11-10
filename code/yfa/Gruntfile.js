@@ -11,9 +11,10 @@ module.exports = function (grunt) {
             options: {
                 require: [],
                 reporter: 'spec',
-                bail: true
+                bail: true,
+                timeout: 12000
             },
-            all:['test/**/*_test.js']
+            all:['test/server/**/*_test.js']
         },
         jshint: {
             options: {
