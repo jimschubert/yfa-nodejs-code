@@ -1,0 +1,11 @@
+extends layout
+
+block content
+  h1= title
+
+  if user
+    p Hello, #{user.facebook.username}!
+    p: a(href="/user/profile") profile
+    p: a(href="/logout") logout
+  else
+    p: a(href="/auth/facebook") Faceook login
