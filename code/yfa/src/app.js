@@ -13,8 +13,12 @@ var app = express();
 
 // all environments
 app.set('port', process.env.PORT || 3000);
+
+// use ejs module for .ejs files and ejs#renderFile for .html files
 app.set('views', __dirname + '/views');
-app.set('view engine', 'jade');
+app.set('view engine', 'ejs');
+app.engine('html', require('ejs').renderFile);
+
 app.use(express.favicon());
 app.use(express.bodyParser());
 app.use(express.methodOverride());
@@ -31,9 +35,20 @@ if ('development' === app.get('env')) {
     app.use(express.errorHandler());
 }
 
+var page = function (filename) {
+    return function (req, res) {
+        res.render(filename);
+    };
+};
+
 // app.get('/', routes.index);
 app.get('/compiled/*?', routes.partial);
 app.get('/resources', resource.list);
+
+app.get('/login', page('login.html'));
+app.get('/logout', page('logout.html'));
+app.get('/authentication', page('authentication.html'));
+app.get('/user/profile', page('profile.html'));
 
 // If running from the command line, start the server
 if (module === require.main) {

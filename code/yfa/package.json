@@ -50,7 +50,8 @@
     "karma-chai": "0.0.1",
     "karma-ng-scenario": "~0.1.0",
     "async": "~0.2.9",
-    "mongoose": "~3.8.0"
+    "mongoose": "~3.8.0",
+    "ejs": "~0.8.5"
   },
   "dependencies": {
     "express": "3.2.6",
