@@ -57,7 +57,12 @@ app.get('/logout', page('logout.html'));
 app.get('/authentication', page('authentication.html'));
 app.get('/user/profile', FacebookAuth.verifyAuth, page('profile.html'));
 
-app.get('/auth/facebook', passport.authenticate('facebook'), function(){});
+app.get('/auth/facebook',
+    passport.authenticate('facebook', {
+            scope: 'email'
+        }
+    ), function () {});
+
 app.get('/auth/facebook/callback',
     passport.authenticate('facebook', {
         failureRedirect: '/authentication'
