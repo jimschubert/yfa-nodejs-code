@@ -61,7 +61,12 @@ module.exports.logout = exports.logout = function (req, res) {
 };
 
 module.exports.verifyAuth = exports.verifyAuth = function (req, res, next) {
-    return req.isAuthenticated() ?
+    var authenticated = req.isAuthenticated();
+    if (authenticated && !req.user.registrationDone) {
+        return res.redirect('/user/profile');
+    }
+
+    return authenticated ?
         next() :
         res.redirect('/login');
 };
