@@ -1,0 +1,38 @@
+<h1>Your profile</h1>
+<form method="post"
+      action="/user/profile"
+        accept-charset="UTF-8">
+    <% if(user.registrationDone === false) { %>
+        <p>
+            Values below have been populated based on your Facebook profile details.
+        </p>
+    <% } %>
+    <p>
+        <label>Username
+            <input type="text" name="username"
+                   value="<%= user.username %>" required />
+        </label>
+    </p>
+
+    <p>
+        <label>First name
+            <input type="text" name="first_name"
+                   value="<%= user.first_name %>" required />
+        </label>
+    </p>
+
+    <p>
+        <label>Last name
+            <input type="text" name="last_name"
+                   value="<%= user.last_name %>" required />
+        </label>
+    </p>
+
+    <p>
+        <label>Email
+            <input type="email" name="email"
+                   value="<%= user.email %>" required />
+        </label>
+    </p>
+    <button type="submit">Save</button>
+</form>

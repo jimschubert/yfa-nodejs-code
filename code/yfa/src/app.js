@@ -9,7 +9,8 @@ var express = require('express'),
     http = require('http'),
     path = require('path'),
     passport = require('passport'),
-    FacebookAuth = require('./FacebookAuth');
+    FacebookAuth = require('./FacebookAuth'),
+    User = require('./models/user');
 
 var app = express();
 
@@ -55,7 +56,36 @@ app.get('/resources', resource.list);
 app.get('/login', page('login.html'));
 app.get('/logout', page('logout.html'));
 app.get('/authentication', page('authentication.html'));
-app.get('/user/profile', FacebookAuth.verifyAuth, page('profile.html'));
+app.get('/user/profile',
+    FacebookAuth.verifyAuth,
+    function (req, res) {
+        res.render('profile', { user: req.user });
+    });
+
+app.post('/user/profile',
+    FacebookAuth.verifyAuth,
+    function (req, res) {
+        var upd = req.body;
+        User.fb(req.user.facebookId, function(err, user){
+            if (err) { /* handle err */ }
+
+            // only new users can change their usernames
+            if (!user.registrationDone) {
+                // TODO: Verify username matches rules, then...
+                user.username = upd.username;
+            }
+
+            user.registrationDone = true;
+            user.first_name = upd.first_name || user.first_name;
+            user.last_name = upd.last_name || user.last_name;
+            user.email = upd.email || user.email;
+            user.state = User.States.ONLINE;
+
+            user.save(function(err, user, numAffected) {
+                res.render('profile', { user: req.user });
+            });
+        });
+    });
 
 app.get('/auth/facebook',
     passport.authenticate('facebook', {

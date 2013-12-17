@@ -25,8 +25,8 @@ module.exports = exports = function (passport) {
                         facebookId: profile.id,
                         registrationDone: false,
                         username: profile.username,
-                        first_name: profile.name.familyName,
-                        last_name: profile.name.givenName,
+                        first_name: profile.name.givenName,
+                        last_name: profile.name.familyName,
                         email: profile.emails[0].value
                     });
                     newUser.save(done);
@@ -62,7 +62,7 @@ module.exports.logout = exports.logout = function (req, res) {
 
 module.exports.verifyAuth = exports.verifyAuth = function (req, res, next) {
     var authenticated = req.isAuthenticated();
-    if (authenticated && !req.user.registrationDone) {
+    if (authenticated && !req.user.registrationDone && req.path !== "/user/profile") {
         return res.redirect('/user/profile');
     }
 

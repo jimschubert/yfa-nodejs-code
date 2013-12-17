@@ -35,5 +35,14 @@ enumValues.forEach(function (val) {
         });
 });
 
+/**
+ * User's activity states
+ *
+ * @property {String} ONLINE 'online'
+ * @property {String} AWAY 'away'
+ * @property {String} OFFLINE 'offline'
+ * @property {Null} NULL null
+ * @property {undefined} UNDEFINED undefined
+ */
 module.exports.States = exports.States = states;
 
