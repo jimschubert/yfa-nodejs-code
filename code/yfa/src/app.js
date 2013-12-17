@@ -27,7 +27,7 @@ app.use(express.bodyParser());
 app.use(express.methodOverride());
 app.use(express.cookieParser());
 app.use(express.session({ secret: 'SECRET' }));
-FacebookAuth(passport);
+FacebookAuth.call(null, passport);
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(app.router);
@@ -67,8 +67,6 @@ app.post('/user/profile',
     function (req, res) {
         var upd = req.body;
         User.fb(req.user.facebookId, function(err, user){
-            if (err) { /* handle err */ }
-
             // only new users can change their usernames
             if (!user.registrationDone) {
                 // TODO: Verify username matches rules, then...
@@ -82,6 +80,7 @@ app.post('/user/profile',
             user.state = User.States.ONLINE;
 
             user.save(function(err, user, numAffected) {
+                console.log('User profile rows affected', numAffected);
                 res.render('profile', { user: user });
             });
         });
@@ -102,9 +101,18 @@ app.get('/auth/logout', FacebookAuth.logout);
 
 // If running from the command line, start the server
 if (module === require.main) {
+    var connection = require('./db');
+    connection().on('connected', function(err){
+        if(err){
+            process.stderr.write(err);
+            process.exit(1);
+        }
+    });
+
     http.createServer(app).listen(app.get('port'), function () {
         console.log('Express server listening on port ' + app.get('port'));
     });
+
 } else {
     // file was require()'d, export (if you don't want to unit test this file, you can remove this)
     app.toots = true;

@@ -1,3 +1,4 @@
+"use strict";
 var path = require('path');
 var facebook = require(path.join(
     process.env.HOME,
@@ -6,8 +7,6 @@ var facebook = require(path.join(
     'facebook.json'));
 var FacebookStrategy = require('passport-facebook').Strategy;
 var User = require('./models/user');
-var connection = require('./db');
-var db = connection();
 
 module.exports = exports = function (passport) {
     // Configure the FacebookStrategy

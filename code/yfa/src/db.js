@@ -9,7 +9,7 @@ var options = {
     keepAlive: true
 };
 
-module.exports = function () {
+module.exports = exports = function () {
     var db = mongoose.connect(uri, options);
 
     db.connection.on('error', function (err) {
