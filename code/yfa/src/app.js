@@ -82,7 +82,7 @@ app.post('/user/profile',
             user.state = User.States.ONLINE;
 
             user.save(function(err, user, numAffected) {
-                res.render('profile', { user: req.user });
+                res.render('profile', { user: user });
             });
         });
     });
