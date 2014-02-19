@@ -7,14 +7,14 @@ module.exports = function (grunt) {
 
     // Project configuration.
     grunt.initConfig({
-        mochacli: {
+        mocha_istanbul: {
             options: {
                 require: [],
                 reporter: 'spec',
                 bail: true,
                 timeout: 12000
             },
-            all:['test/server/**/*_test.js']
+            src:['test/server']
         },
         jshint: {
             options: {
@@ -98,7 +98,7 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-karma');
     grunt.loadNpmTasks('grunt-express');
     grunt.loadNpmTasks('grunt-env');
-    grunt.loadNpmTasks('grunt-mocha-cli');
+    grunt.loadNpmTasks('grunt-mocha-istanbul');
 
     // note: to run karma in continuous (autowatch) mode, run it directly:
     // unit tests:
@@ -107,5 +107,5 @@ module.exports = function (grunt) {
     //      karma start config/karma-e2e.conf.js
     grunt.registerTask('default', ['env:test', 'jshint:app', 'test', 'e2e']);
     grunt.registerTask('e2e', ['env:test', 'express', 'karma:e2e']);
-    grunt.registerTask('test', ['env:test', 'mochacli:all', 'karma:unit']);
+    grunt.registerTask('test', ['env:test', 'mocha_istanbul', 'karma:unit']);
 };
