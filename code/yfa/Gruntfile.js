@@ -11,6 +11,7 @@ module.exports = function (grunt) {
             options: {
                 require: [],
                 reporter: 'spec',
+                recursive: true,
                 bail: true,
                 timeout: 12000
             },
