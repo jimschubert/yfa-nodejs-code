@@ -59,7 +59,8 @@
     "express": "3.2.6",
     "jade": "*",
     "jasmine-node": "~1.10.1",
-    "http-status": "~0.1.6"
+    "http-status": "~0.1.6",
+    "should": "~3.3.1"
   },
   "keywords": []
 }
