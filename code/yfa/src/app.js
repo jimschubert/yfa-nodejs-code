@@ -6,11 +6,13 @@
 var express = require('express'),
     routes = require('./routes'),
     resource = require('./routes/resource'),
+    users = require('./routes/users'),
     http = require('http'),
     path = require('path'),
     passport = require('passport'),
     FacebookAuth = require('./FacebookAuth'),
-    User = require('./models/user');
+    User = require('./models/user'),
+    HttpStatus = require('http-status');
 
 var app = express();
 
@@ -30,6 +32,54 @@ app.use(express.session({ secret: 'SECRET' }));
 FacebookAuth.call(null, passport);
 app.use(passport.initialize());
 app.use(passport.session());
+
+/* custom middlware needs to come before router */
+app.use(function(req,res,next){
+    req.URI = function(){
+        return req.protocol + '://' + req.get('Host');
+    }.bind(req);
+
+    res.problem = function(status, title, details, extensions) {
+        // default to a 400 Bad Request if we call this incorrectly
+        if("number" !== typeof status) {
+            console.warn("HTTP Problem status was not a number. It was %j", status);
+            status = 400;
+        } else if (!(status in HttpStatus)) {
+            console.warn("HTTP Problem status was not an http status code. Got %d", status);
+            status = 400;
+        }
+
+        // define our 'problem' structure
+        var problem = {
+            "type": req.URI() + "/probs/" + HttpStatus[status].toLowerCase().replace(/\s+/g, '-'),
+            "title": title,
+            "detail": details,
+            "instance": req.URI() + req.url,
+            "status": status
+        };
+
+        // add any property extensions to 'problem'
+        if("object" === typeof extensions) {
+            delete extensions['type'];
+            delete extensions['instance'];
+            delete extensions['status'];
+
+            for(var key in extensions){
+                if(extensions.hasOwnProperty(key)) {
+                    problem[key] = extensions[key];
+                }
+            }
+        }
+
+        res.set({
+            'Content-Type' : 'application/problem+json',
+            'Content-Language': 'en'
+        });
+        res.json(status, problem);
+    }.bind(res);
+    next();
+});
+
 app.use(app.router);
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -49,7 +99,10 @@ var page = function (filename) {
     };
 };
 
-// app.get('/', routes.index);
+/* Users */
+var apiBase = '/api/v1';
+app.post(apiBase + '/users', users.create);
+
 app.get('/compiled/*?', routes.partial);
 app.get('/resources', resource.list);
 
@@ -87,10 +140,7 @@ app.post('/user/profile',
     });
 
 app.get('/auth/facebook',
-    passport.authenticate('facebook', {
-            scope: 'email'
-        }
-    ), function () {});
+    passport.authenticate('facebook', { scope: 'email' } ), function () {});
 
 app.get('/auth/facebook/callback',
     passport.authenticate('facebook', {
