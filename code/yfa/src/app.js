@@ -60,7 +60,8 @@ var page = function (filename) {
 
 /* Users */
 var apiBase = '/api/v1';
-app.post(apiBase + '/users', users.create);
+app.get(apiBase + '/users', middleware.requiresAuth, users.list);
+app.post(apiBase + '/users', middleware.requiresAuth, users.create);
 
 app.get('/compiled/*?', routes.partial);
 app.get('/resources', resource.list);
