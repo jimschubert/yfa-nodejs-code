@@ -166,4 +166,38 @@ describe('middleware', function () {
             });
         });
     });
+
+    describe('requiresAuth middleware', function(){
+        it('should pass along to next function when authenticated', function(done){
+            var req = {
+                isAuthenticated: function(){ return true; }
+            };
+
+            var res = {
+                problem: function(){ assert.fail("This should not call res.problem"); }
+            };
+
+            middleware.requiresAuth(req, res, function(){
+                done(); // no assert needed here.
+            });
+        });
+
+        it('should respond with a problem (HTTP Status 401) when not authenticated', function(done){
+            var req = {
+                isAuthenticated: function(){ return false; }
+            };
+
+            var res = {
+                problem: function(status){
+                    // no need to assert title and details here.
+                    assert.equal(status, 401, "Expected unauthorized status");
+                    done();
+                }
+            };
+
+            middleware.requiresAuth(req, res, function(){
+                assert.fail("We shouldn't pass to next function when req is not authenticated");
+            });
+        });
+    });
 });
