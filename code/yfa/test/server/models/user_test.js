@@ -93,6 +93,7 @@ describe("User", function(){
                 next();
             }, function(err){
                 // WARN: swallow exceptions
+                users = [];
                 done();
             });
         });

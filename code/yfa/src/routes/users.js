@@ -35,7 +35,7 @@ exports.list = function (req, res) {
                 "Could not list users due to internal error");
         }
 
-        if(results === null){
+        if(results === null || results.length === 0){
             return res.json(HttpStatus.NO_CONTENT);
         } else {
             return res.json(HttpStatus.OK, results);
