@@ -42,3 +42,88 @@ exports.list = function (req, res) {
         }
     });
 };
+
+/**
+ * Gets a user by ID
+ *
+ * @param req
+ * @param res
+ */
+exports.getById = function (req, res) {
+    // Example mongodb id: 52aff48d78b818c844000001
+    console.log(req.user);
+    User.getById(req.params.mid, function(err, results){
+        res.json(HttpStatus.OK, results);
+    });
+};
+
+/**
+ * Updates a user document
+ *
+ * Expects res.problem middleware and an authenticated passport.js session.
+ * Requires this to be constrained to the user making the request.
+ *
+ * @param req
+ * @param res
+ */
+exports.update = function (req, res) {
+    var upd = req.body;
+    User.fb(req.user.facebookId, function(err, user){
+        if(err) {
+            return res.problem(
+                HttpStatus.BAD_REQUEST,
+                "Could not save user information",
+                "There was an error processing the request to save your information"
+            );
+        }
+
+        // only new users can change their usernames
+        if (!user.registrationDone) {
+            // must start with a letter and be between 5 and 16 alphanumeric characters
+            if(/^[a-zA-Z]{1}[a-zA-Z0-9_]{4,15}$/.test(upd.username) === false) {
+                return res.problem(
+                    HttpStatus.BAD_REQUEST,
+                    "Invalid Username",
+                    "User names must be 5-16 characters"
+                );
+            }
+
+            user.username = upd.username;
+        }
+
+        user.registrationDone = true;
+        user.firstName = upd.firstName || user.firstName;
+        user.lastName = upd.lastName || user.lastName;
+        user.email = upd.email || user.email;
+        user.state = User.States.ONLINE;
+
+        return user.save(function(err, user) {
+            res.json(HttpStatus.OK, user);
+        });
+    });
+};
+
+/**
+ * Deletes a user document
+ *
+ * Expects res.problem middleware and an authenticated passport.js session.
+ * Requires this to be constrained to the user making the request.
+ *
+ * @param req
+ * @param res
+ */
+exports.delete = function (req, res) {
+    User.fb(req.user.facebookId, function(err, user) {
+        if (err) {
+            return res.problem(
+                HttpStatus.BAD_REQUEST,
+                "Could not delete user",
+                "There was an error processing the request to save your information"
+            );
+        }
+
+        return user.remove(function(err, result){
+            res.json(HttpStatus.OK, result);
+        });
+    });
+};

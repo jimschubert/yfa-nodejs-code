@@ -17,8 +17,8 @@ var authVerification = function (accessToken, refreshToken, profile, done) {
                 facebookId: profile.id,
                 registrationDone: false,
                 username: profile.username,
-                first_name: profile.name.givenName,
-                last_name: profile.name.familyName,
+                firstName: profile.name.givenName,
+                lastName: profile.name.familyName,
                 email: profile.emails[0].value
             });
             newUser.save(done);

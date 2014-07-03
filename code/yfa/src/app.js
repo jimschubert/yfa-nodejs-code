@@ -63,6 +63,22 @@ var apiBase = '/api/v1';
 app.get(apiBase + '/users', middleware.requiresAuth, users.list);
 app.post(apiBase + '/users', middleware.requiresAuth, users.create);
 
+app.param('mid', function(req,res,next,mid){
+    mid = /^[a-z0-9]+$/.exec(String(mid));
+    if (mid) {
+        req.params['mid'] = mid[0];
+        next();
+    } else {
+        // next('route') is a special case in Express that passes to the next
+        // possible matching route
+        next('route');
+    }
+});
+
+app.get(apiBase + '/users/:mid', middleware.requiresAuth, users.getById);
+app.put(apiBase + '/users/:mid', middleware.requiresAuth, middleware.constrainToUserAction, users.update);
+app.delete(apiBase + '/users/:mid', middleware.requiresAuth, middleware.constrainToUserAction, users.delete);
+
 app.get('/compiled/*?', routes.partial);
 app.get('/resources', resource.list);
 
@@ -87,8 +103,8 @@ app.post('/user/profile',
             }
 
             user.registrationDone = true;
-            user.first_name = upd.first_name || user.first_name;
-            user.last_name = upd.last_name || user.last_name;
+            user.firstName = upd.firstName || user.firstName;
+            user.lastName = upd.lastName || user.lastName;
             user.email = upd.email || user.email;
             user.state = User.States.ONLINE;
 

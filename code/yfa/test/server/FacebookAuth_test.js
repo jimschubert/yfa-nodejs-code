@@ -41,8 +41,8 @@ describe('FacebookAuth', function(){
 
         var user = new User({
             username: "jimschubert",
-            first_name: "Jim",
-            last_name: "Schubert",
+            firstName: "Jim",
+            lastName: "Schubert",
             email: "james.schubert@gmail.com",
             state: "offline",
             facebookId: profile.id

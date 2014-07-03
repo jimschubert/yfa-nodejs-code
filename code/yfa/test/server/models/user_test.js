@@ -24,8 +24,8 @@ describe("User", function(){
         it("should construct a user object", function(done){
             var user = new User({
                 username: "jimschubert",
-                first_name: "Jim",
-                last_name: "Schubert",
+                firstName: "Jim",
+                lastName: "Schubert",
                 email: "james.schubert@gmail.com",
                 state: "offline"
             });
@@ -57,8 +57,8 @@ describe("User", function(){
         function createTestUser(name, done) {
             var user = new User({
                 username: name,
-                first_name: name,
-                last_name: name,
+                firstName: name,
+                lastName: name,
                 email: name + "@example.com",
                 state: "offline"
             });
