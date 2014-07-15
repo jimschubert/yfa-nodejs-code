@@ -20,7 +20,8 @@ describe('users route', function () {
             firstName: first,
             lastName: last,
             email: email,
-            state: state
+            state: state,
+            registrationDone: false
         });
         user.save(function(err, doc){
             return done(err, doc);
@@ -44,7 +45,9 @@ describe('users route', function () {
             absoluteUri: function () {
                 return req.baseUri() + req.url;
             },
-            query: {}
+            query: {},
+            params: {},
+            user: {}
         };
 
         // This is a mock response object that allows us to verify content
@@ -149,6 +152,311 @@ describe('users route', function () {
                 });
 
                 users.list(req, res);
+            });
+        });
+    });
+
+    describe('#getById', function(){
+        it('should find a user by id (set on req.params.mid)', function(done){
+            // Get some test user object
+            User.findOne({}, function(err, doc){
+                assert.ifError(err);
+                assert.ok(doc !== null);
+
+                req.params.mid = doc._id;
+
+                res.onResponse(function(){
+                    assert.equal(res.statusCode, HttpStatus.OK);
+                    assert.ok(Array.isArray(res.actual) === false);
+
+                    // remember mongoose documents have a .equals helper for assertions
+                    assert.ok(doc.equals(res.actual));
+                    done();
+                });
+
+                users.getById(req, res);
+            });
+        });
+
+        it('should not find a user by some invalid id', function(done){
+            req.params.mid = '00aaa11b23c456d789000000';
+            res.onResponse(function(){
+                assert.equal(res.statusCode, HttpStatus.NO_CONTENT);
+                assert.ok(Array.isArray(res.actual) === false);
+
+                // remember mongoose documents have a .equals helper for assertions
+                assert.equal(res.actual, null);
+                done();
+            });
+
+            users.getById(req, res);
+        });
+
+        it('should return an error for database error', function(done){
+            var expected = {
+                "type"    : "https://www.example.com/probs/internal-server-error",
+                "title"   : "Unexpected problem",
+                "detail"  : "Could not retrieve user due to internal error",
+                "instance": req.absoluteUri(),
+                "status"  : HttpStatus.INTERNAL_SERVER_ERROR
+            };
+
+            // This is an invalid key to search in for mongodb field _id
+            req.params.mid = { 'a': 'b' };
+
+            res.onResponse(function(){
+                assert.equal(res.statusCode, HttpStatus.INTERNAL_SERVER_ERROR);
+
+                res.actual.should.eql(expected);
+                done();
+            });
+
+            users.getById(req, res);
+        });
+    });
+
+    describe('#update', function(){
+        it('should display a message for database failure on retrieve', function(done){
+            var expected = {
+                "type"    : "https://www.example.com/probs/bad-request",
+                "title"   : "Could not save user information",
+                "detail"  : "There was an error processing the request to save your information",
+                "instance": req.absoluteUri(),
+                "status"  : HttpStatus.BAD_REQUEST
+            };
+
+            req.user.facebookId = NaN;
+            res.onResponse(function(){
+                assert.equal(res.statusCode, HttpStatus.BAD_REQUEST);
+
+                res.actual.should.eql(expected);
+
+                done();
+            });
+
+            users.update(req, res);
+        });
+
+        function buildInvalidUsernameTest(findOptions, username) {
+
+            return function(done){
+                var expectedResponse = {
+                    "type"    : "https://www.example.com/probs/bad-request",
+                    "title"   : "Invalid Username",
+                    "detail"  : "User names must be 5-16 characters",
+                    "instance": req.absoluteUri(),
+                    "status"  : HttpStatus.BAD_REQUEST
+                };
+
+                User.findOne(findOptions, function(err, doc){
+                    assert.ifError(err);
+                    assert.ok(doc !== null);
+
+                    var originalUsername = doc.username;
+
+                    req.params.mid = doc._id;
+                    req.body = {
+                        username: username
+                    };
+
+                    res.onResponse(function(){
+                        assert.equal(res.statusCode, HttpStatus.BAD_REQUEST);
+                        assert.ok(Array.isArray(res.actual) === false);
+
+                        res.actual.should.eql(expectedResponse);
+
+                        done();
+                    });
+
+                    users.update(req, res);
+                });
+            };
+        }
+
+        it('should fail to update invalid usernames: starts with non-letter',
+            buildInvalidUsernameTest({firstName: 'Jim52'}, '7nonletter')
+        );
+
+        it('should fail to update invalid usernames: invalid characters',
+            buildInvalidUsernameTest({firstName: 'Jim53'}, 'invalid char$')
+        );
+
+        it('should fail to update invalid usernames: too short',
+            buildInvalidUsernameTest({firstName: 'Jim54'}, '123')
+        );
+
+        it('should fail to update invalid usernames: too long',
+            buildInvalidUsernameTest({firstName: 'Jim24'}, 'abcdefghijklmnopqrstuvwxyz')
+        );
+
+        /**
+         * Builds out a test to check for a valid username.
+         *
+         * @param findOptions Query initial document with these parameters before modification
+         * @param postData The post body's json object
+         * @param verificationFn function(doc)
+         *
+         * @returns {Function}
+         */
+        function buildValidUsernameTest(findOptions, postData, verificationFn) {
+            return function(done){
+                User.findOne(findOptions, function(err, doc){
+                    assert.ifError(err);
+                    assert.ok(doc !== null);
+
+                    assert.ok(doc.registrationDone === false, 'This data should be stubbed anew in beforeEach');
+
+                    req.params.mid = doc._id;
+                    req.body = postData;
+
+                    res.onResponse(function(){
+
+                        verificationFn.call(null, doc);
+
+                        done();
+                    });
+
+                    users.update(req, res);
+                });
+            };
+        }
+
+        it('should only update a username whose registration is not completed',
+            buildValidUsernameTest({firstName: 'Jim12'}, {
+                username: 'FrankSinatra'
+            }, function(originalDoc){
+                assert.equal(res.statusCode, HttpStatus.OK);
+                assert.ok(Array.isArray(res.actual) === false);
+                assert.ok(originalDoc.registrationDone === false);
+
+                // remember mongoose documents have a .equals helper for assertions
+                assert.ok(!originalDoc.equals(res.actual));
+
+                var actual = res.actual;
+
+                assert.notEqual(actual.username, originalDoc.username);
+                assert.equal(actual.username, 'FrankSinatra');
+
+                assert.ok(actual.registrationDone);
+            })
+        );
+    });
+
+    describe('#delete', function() {
+        it('should error for invalid user facebook id (not :mid, can only delete own user record)', function(done){
+            var expectedResponse = {
+                "type"    : "https://www.example.com/probs/bad-request",
+                "title"   : "Could not delete user",
+                "detail"  : "There was an error processing the request to save your information",
+                "instance": req.absoluteUri(),
+                "status"  : HttpStatus.BAD_REQUEST
+            };
+
+            req.user.facebookId = {};
+
+            res.onResponse(function(){
+                assert.equal(res.statusCode, HttpStatus.BAD_REQUEST);
+                assert.ok(Array.isArray(res.actual) === false);
+
+                res.actual.should.eql(expectedResponse);
+
+                done();
+            });
+
+            users.delete(req, res);
+        });
+
+        it('should error if :mid instead of facebookId was supplied', function(done){
+            var expectedResponse = {
+                "type"    : "https://www.example.com/probs/bad-request",
+                "title"   : "Could not delete user",
+                "detail"  : "There was an error processing the request to save your information",
+                "instance": req.absoluteUri(),
+                "status"  : HttpStatus.BAD_REQUEST
+            };
+
+            User.findOne({}, function(err, doc) {
+                assert.ifError(err);
+                assert.ok(doc !== null);
+
+                req.user.facebookId = doc._id;
+
+                res.onResponse(function () {
+                    assert.equal(res.statusCode, HttpStatus.BAD_REQUEST);
+                    assert.ok(Array.isArray(res.actual) === false);
+
+                    res.actual.should.eql(expectedResponse);
+
+                    done();
+                });
+
+                users.delete(req, res);
+            });
+        });
+
+        it('should delete a user by facebookId', function(done){
+            User.findOne({}, function(err, doc) {
+                assert.ifError(err);
+                assert.ok(doc !== null);
+
+                req.user.facebookId = doc.facebookId;
+
+                res.onResponse(function () {
+                    assert.equal(res.statusCode, HttpStatus.OK);
+                    assert.ok(Array.isArray(res.actual) === false);
+
+                    assert.ok(doc.equals(res.actual));
+
+                    done();
+                });
+
+                users.delete(req, res);
+            });
+        });
+    });
+
+    describe('#getMessages', function(){
+        it('should return problem response on error', function(done){
+
+            req.params.mid = 'asdf';
+
+            res.onResponse(function () {
+                assert.equal(res.statusCode, HttpStatus.NO_CONTENT);
+                assert.ok(Array.isArray(res.actual) === false);
+
+                done();
+            });
+
+            users.getMessages(req, res);
+        });
+
+        it('should return an array of messages when more than one message is stored.', function(done){
+            var messages = [{first:"asdf"}, {second: "fdas"}];
+
+            User.findOne({}, function(err, doc){
+                assert.ifError(err);
+                assert.ok(doc !== null);
+
+                req.params.mid = doc._id;
+
+                doc.messages = messages;
+                doc.save(function(err,doc){
+                    assert.ifError(err);
+                    assert.ok(doc !== null);
+
+                    res.onResponse(function(){
+                        assert.equal(res.statusCode, HttpStatus.OK);
+                        assert.ok(Array.isArray(res.actual) === false);
+                        assert.ok(Array.isArray(res.actual.messages));
+
+                        // Note: .slice() here because messages is still a mongoose array-like object
+                        assert.deepEqual(res.actual.messages.slice(), messages);
+
+                        done();
+                    });
+
+                    users.getMessages(req, res);
+                });
             });
         });
     });

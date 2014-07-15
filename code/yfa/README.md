@@ -8,7 +8,7 @@ __note__ depending on your system configuration, you may need to prepend `sudo` 
 Install application dependencies:
 
 ```Bash
-npm install -g grunt grunt-cli karma jshint
+npm install -g grunt grunt-cli karma@0.10 jshint
 npm install -d
 ```
 

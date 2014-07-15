@@ -10,8 +10,8 @@ var userSchema = new mongoose.Schema({
     lastName: String,
     email: String,
     state: { type: String, enum: enumValues },
-    cohorts: []
-    // TODO: messages
+    cohorts: [],
+    messages: []
     // TODO: images
 }, { collection: 'yfa' });
 
@@ -35,6 +35,14 @@ userSchema.static('publicList',  function (skip, take, cb) {
         skip: Math.max(0, skip),
         limit: Math.min(Math.max(1, take), 25)
     }, cb);
+});
+
+userSchema.static('getMessages', function(id,cb){
+    if("function" !== typeof cb){
+        cb = function(){};
+    }
+
+   return this.findOne({_id: id }, 'messages', null, cb);
 });
 
 userSchema.static('getById', function(id, self, cb) {

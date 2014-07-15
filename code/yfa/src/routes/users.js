@@ -51,9 +51,18 @@ exports.list = function (req, res) {
  */
 exports.getById = function (req, res) {
     // Example mongodb id: 52aff48d78b818c844000001
-    console.log(req.user);
     User.getById(req.params.mid, function(err, results){
-        res.json(HttpStatus.OK, results);
+        if(err){
+            return res.problem(HttpStatus.INTERNAL_SERVER_ERROR,
+                "Unexpected problem",
+                "Could not retrieve user due to internal error");
+        }
+
+        if(results === null || results.length === 0){
+            return res.json(HttpStatus.NO_CONTENT);
+        } else {
+            return res.json(HttpStatus.OK, results);
+        }
     });
 };
 
@@ -69,7 +78,7 @@ exports.getById = function (req, res) {
 exports.update = function (req, res) {
     var upd = req.body;
     User.fb(req.user.facebookId, function(err, user){
-        if(err) {
+        if(err || user === null) {
             return res.problem(
                 HttpStatus.BAD_REQUEST,
                 "Could not save user information",
@@ -114,7 +123,7 @@ exports.update = function (req, res) {
  */
 exports.delete = function (req, res) {
     User.fb(req.user.facebookId, function(err, user) {
-        if (err) {
+        if (err || user === null) {
             return res.problem(
                 HttpStatus.BAD_REQUEST,
                 "Could not delete user",
@@ -125,5 +134,26 @@ exports.delete = function (req, res) {
         return user.remove(function(err, result){
             res.json(HttpStatus.OK, result);
         });
+    });
+};
+
+/**
+ * Gets a list of user's undelivered messages
+ *
+ * Expects res.problem middleware and an authenticated passport.js session.
+ * Requires this to be constrained to the user making the request.
+ *
+ * @param req
+ * @param res
+ */
+exports.getMessages = function (req, res){
+    User.getMessages(req.params.mid, function(err,doc){
+        if (err || doc === null || doc.messages === null) {
+            return res.problem(
+              HttpStatus.NO_CONTENT
+            );
+        }
+
+        return res.json(HttpStatus.OK, doc);
     });
 };

@@ -5,7 +5,6 @@
  */
 var express = require('express'),
     routes = require('./routes'),
-    resource = require('./routes/resource'),
     users = require('./routes/users'),
     http = require('http'),
     path = require('path'),
@@ -78,9 +77,9 @@ app.param('mid', function(req,res,next,mid){
 app.get(apiBase + '/users/:mid', middleware.requiresAuth, users.getById);
 app.put(apiBase + '/users/:mid', middleware.requiresAuth, middleware.constrainToUserAction, users.update);
 app.delete(apiBase + '/users/:mid', middleware.requiresAuth, middleware.constrainToUserAction, users.delete);
+app.get(apiBase + '/users/:mid/messages', middleware.requiresAuth, middleware.constrainToUserAction, users.getMessages);
 
 app.get('/compiled/*?', routes.partial);
-app.get('/resources', resource.list);
 
 app.get('/login', page('login.html'));
 app.get('/logout', page('logout.html'));
