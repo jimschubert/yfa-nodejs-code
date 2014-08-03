@@ -67,6 +67,72 @@ exports.getById = function (req, res) {
 };
 
 /**
+ * Gets the list of cohorts for a user, given the user's id.
+ *
+ * @param req
+ * @param res
+ */
+exports.getCohortsById = function (req, res) {
+	User.getCohortsById(req.params.mid, function(err, results) {
+		if(err){
+			return res.problem(HttpStatus.INTERNAL_SERVER_ERROR,
+				"Unexpected problem",
+				"Could not retrieve cohorts due to internal error");
+		}
+
+		if(results === null || results.length === 0) {
+			return res.json(HttpStatus.NO_CONTENT);
+		} else {
+			return res.json(HttpStatus.OK, results);
+		}
+	});
+};
+
+/**
+ * Add a single cohort to a user object.
+ *
+ * @param req
+ * @param res
+ */
+exports.addCohortForUser = function (req, res) {
+    User.addCohort(req.params.mid, req.params.id, function(err, results){
+        if(err){
+            return res.problem(HttpStatus.INTERNAL_SERVER_ERROR,
+                "Unexpected problem",
+                "Could not save cohort due to internal error");
+        }
+
+        if(results === null || results.length === 0) {
+            return res.json(HttpStatus.NO_CONTENT);
+        } else {
+            return res.json(HttpStatus.OK, results);
+        }
+    });
+};
+
+/**
+ * Remove a single cohort from a user object.
+ *
+ * @param req
+ * @param res
+ */
+exports.removeCohortFromUser = function (req, res) {
+    User.removeCohort(req.params.mid, req.params.id, function(err, results){
+        if(err){
+            return res.problem(HttpStatus.INTERNAL_SERVER_ERROR,
+                "Unexpected problem",
+                "Could not remove cohort due to internal error");
+        }
+
+        if(results === null || results.length === 0) {
+            return res.json(HttpStatus.NO_CONTENT);
+        } else {
+            return res.json(HttpStatus.OK, results);
+        }
+    });
+};
+
+/**
  * Updates a user document
  *
  * Expects res.problem middleware and an authenticated passport.js session.

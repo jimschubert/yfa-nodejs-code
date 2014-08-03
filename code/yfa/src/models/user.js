@@ -10,7 +10,7 @@ var userSchema = new mongoose.Schema({
     lastName: String,
     email: String,
     state: { type: String, enum: enumValues },
-    cohorts: [],
+    cohorts: [ { type: mongoose.Schema.Types.ObjectId, ref: 'User' } ],
     messages: []
     // TODO: images
 }, { collection: 'yfa' });
@@ -55,6 +55,30 @@ userSchema.static('getById', function(id, self, cb) {
         'username state firstName lastName email state cohorts';
 
     return this.findOne({_id: id }, fields, null, cb);
+});
+
+userSchema.static('getCohortsById', function(id, self, cb) {
+    if("function" !== typeof cb && "function" === typeof self){
+        cb = self;
+	}
+
+	var fields = self ? 
+		null : 
+		'cohorts';
+
+	return this.findOne({ _id: id }, fields, null, cb);
+});
+
+userSchema.static('addCohort', function(userId, cohortId, cb){
+    return this.findOneAndUpdate({ _id: userId }, {
+        $push: { cohorts: cohortId }
+    }, cb);
+});
+
+userSchema.static('removeCohort', function(userId, cohortId, cb){
+    return this.findOneAndUpdate({ _id: userId }, {
+        $pull: { cohorts: cohortId }
+    }, cb);
 });
 
 var User = mongoose.model('User', userSchema);

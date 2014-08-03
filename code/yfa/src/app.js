@@ -78,6 +78,9 @@ app.get(apiBase + '/users/:mid', middleware.requiresAuth, users.getById);
 app.put(apiBase + '/users/:mid', middleware.requiresAuth, middleware.constrainToUserAction, users.update);
 app.delete(apiBase + '/users/:mid', middleware.requiresAuth, middleware.constrainToUserAction, users.delete);
 app.get(apiBase + '/users/:mid/messages', middleware.requiresAuth, middleware.constrainToUserAction, users.getMessages);
+app.get(apiBase + '/users/:mid/cohorts', middleware.requiresAuth, users.getCohortsById);
+app.post(apiBase + '/users/:mid/cohorts/:id', middleware.requiresAuth, middleware.constrainToUserAction, users.addCohortForUser);
+app.delete(apiBase + '/users/:mid/cohorts/:id', middleware.requiresAuth, middleware.constrainToUserAction, users.removeCohortFromUser);
 
 app.get('/compiled/*?', routes.partial);
 
