@@ -57,7 +57,7 @@ userSchema.static('getById', function(id, self, cb) {
     return this.findOne({_id: id }, fields, null, cb);
 });
 
-userSchema.static('getCohortsById', function(id, self, cb) {
+userSchema.static('getCohortsById', function(id, cb) {
 	return this.findOne({ _id: id }, 'cohorts', null, cb);
 });
 
