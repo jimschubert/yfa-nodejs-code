@@ -58,15 +58,7 @@ userSchema.static('getById', function(id, self, cb) {
 });
 
 userSchema.static('getCohortsById', function(id, self, cb) {
-    if("function" !== typeof cb && "function" === typeof self){
-        cb = self;
-	}
-
-	var fields = self ? 
-		null : 
-		'cohorts';
-
-	return this.findOne({ _id: id }, fields, null, cb);
+	return this.findOne({ _id: id }, 'cohorts', null, cb);
 });
 
 userSchema.static('addCohort', function(userId, cohortId, cb){
