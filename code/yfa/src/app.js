@@ -82,6 +82,21 @@ app.get(apiBase + '/users/:mid/cohorts', middleware.requiresAuth, users.getCohor
 app.post(apiBase + '/users/:mid/cohorts/:id', middleware.requiresAuth, middleware.constrainToUserAction, users.addCohortForUser);
 app.delete(apiBase + '/users/:mid/cohorts/:id', middleware.requiresAuth, middleware.constrainToUserAction, users.removeCohortFromUser);
 
+app.get(apiBase + '/cohorts', middleware.midFromQueryString('user_id'),
+    middleware.requiresAuth,
+    middleware.constrainToUserAction,
+    users.getCohortsById);
+
+app.post(apiBase + '/cohorts/:id', middleware.midFromQueryString('user_id'),
+    middleware.requiresAuth,
+    middleware.constrainToUserAction,
+    users.addCohortForUser);
+
+app.delete(apiBase + '/cohorts/:id', middleware.midFromQueryString('user_id'),
+    middleware.requiresAuth,
+    middleware.constrainToUserAction,
+    users.removeCohortFromUser);
+
 app.get('/compiled/*?', routes.partial);
 
 app.get('/login', page('login.html'));

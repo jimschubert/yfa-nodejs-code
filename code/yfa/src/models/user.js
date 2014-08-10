@@ -63,7 +63,7 @@ userSchema.static('getCohortsById', function(id, cb) {
 
 userSchema.static('addCohort', function(userId, cohortId, cb){
     return this.findOneAndUpdate({ _id: userId }, {
-        $push: { cohorts: cohortId }
+        $addToSet: { cohorts: cohortId }
     }, cb);
 });
 
