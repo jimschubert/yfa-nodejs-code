@@ -5,6 +5,6 @@ var imageSchema = new mongoose.Schema({
     dataURI: String
 });
 
-var Image = mongoose.model('Image', imageSchema);
+var ImageModel = mongoose.model('Image', imageSchema);
 
-module.exports = exports = Image;
+module.exports = exports = ImageModel;
