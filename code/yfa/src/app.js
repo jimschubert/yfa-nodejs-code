@@ -6,6 +6,7 @@
 var express = require('express'),
     routes = require('./routes'),
     users = require('./routes/users'),
+    messages = require('./routes/messages'),
     http = require('http'),
     path = require('path'),
     passport = require('passport'),
@@ -96,6 +97,18 @@ app.delete(apiBase + '/cohorts/:id', middleware.midFromQueryString('user_id'),
     middleware.requiresAuth,
     middleware.constrainToUserAction,
     users.removeCohortFromUser);
+
+app.post(apiBase + '/messages', middleware.midFromQueryString('user_id'),
+    middleware.requiresAuth,
+    messages.send);
+
+app.get(apiBase + '/messages/:mid/attachments',
+    middleware.requiresAuth,
+    messages.getAttachments);
+
+app.delete(apiBase + '/messages/:mid',
+    middleware.requiresAuth,
+    messages.delete);
 
 app.get('/compiled/*?', routes.partial);
 
