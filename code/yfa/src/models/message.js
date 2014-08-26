@@ -1,6 +1,7 @@
 "use strict";
 var mongoose = require('mongoose');
 var User = require('./user');
+var Img = require('./image');
 
 var messageSchema = new mongoose.Schema({
     to: { type:mongoose.Schema.Types.ObjectId, ref: 'User'},

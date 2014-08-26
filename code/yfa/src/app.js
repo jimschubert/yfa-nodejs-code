@@ -7,6 +7,7 @@ var express = require('express'),
     routes = require('./routes'),
     users = require('./routes/users'),
     messages = require('./routes/messages'),
+    images = require('./routes/images'),
     http = require('http'),
     path = require('path'),
     passport = require('passport'),
@@ -25,7 +26,7 @@ app.set('view engine', 'ejs');
 app.engine('html', require('ejs').renderFile);
 
 app.use(express.favicon());
-app.use(express.bodyParser());
+app.use(express.bodyParser({uploadDir: path.join(__dirname, 'tmp'), keepExtensions:true}));
 app.use(express.methodOverride());
 app.use(express.cookieParser());
 app.use(express.session({ secret: 'SECRET' }));
@@ -109,6 +110,14 @@ app.get(apiBase + '/messages/:mid/attachments',
 app.delete(apiBase + '/messages/:mid',
     middleware.requiresAuth,
     messages.delete);
+
+app.get(apiBase + '/images',
+    middleware.requiresAuth,
+    images.list);
+
+app.post(apiBase + '/images',
+    middleware.requiresAuth,
+    images.save);
 
 app.get('/compiled/*?', routes.partial);
 

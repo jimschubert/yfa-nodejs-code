@@ -171,6 +171,7 @@ exports.update = function (req, res) {
         user.lastName = upd.lastName || user.lastName;
         user.email = upd.email || user.email;
         user.state = User.States.ONLINE;
+        user.avatar = upd.avatar;
 
         return user.save(function(err, user) {
             res.json(HttpStatus.OK, user);
