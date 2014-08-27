@@ -119,6 +119,10 @@ app.post(apiBase + '/images',
     middleware.requiresAuth,
     images.save);
 
+app.get(apiBase + '/images/:mid',
+    middleware.requiresAuth,
+    images.getById);
+
 app.get('/compiled/*?', routes.partial);
 
 app.get('/login', page('login.html'));

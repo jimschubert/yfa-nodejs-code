@@ -54,3 +54,37 @@ exports.list = function(req, res){
         return res.json(HttpStatus.OK, { images: results });
     });
 };
+
+exports.getById = function(req, res){
+    Img.getById(req.params.mid, function(err, result){
+        if(err){
+            return res.problem(HttpStatus.INTERNAL_SERVER_ERROR,
+                "Unexpected problem",
+                "Could not get image due to internal error");
+        }
+
+        if(parseInt(req.query['d'], 10) === 1 && result && result.dataURI) {
+            var header = [],
+                lastChar = '',
+                len = result.dataURI.length;
+
+            for(var i = 0; i < len && lastChar != ','; i++){
+                lastChar = result.dataURI[i];
+                header.push(lastChar);
+            }
+
+            var dataURIHeader = header.join('');
+            var mimeType = dataURIHeader.match(/data:([^;]*?);base64,/)[1];
+
+            var buffer = new Buffer(result.dataURI.slice(header.length), 'base64');
+
+            res.setHeader('Content-Type', mimeType);
+            res.setHeader('Content-Disposition', 'attachment; filename=' + req.params.mid + '.' + mimeType.split('/')[1]);
+            res.setHeader('Content-Length', buffer.length);
+
+            return res.end(buffer);
+        } else {
+            return res.json(HttpStatus.OK, result);
+        }
+    });
+};
