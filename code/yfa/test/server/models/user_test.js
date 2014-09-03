@@ -177,5 +177,27 @@ describe("User", function(){
                 });
             });
         });
+
+        describe('addCohort', function(){
+            it('should add a cohort id', function(done){
+                User.addCohort(users[1]._id, users[2]._id, function(err, results){
+                    assert.ifError(err);
+
+                    assert.ok(results != null, 'results should not be null');
+                    assert.ok(results.cohorts != null, 'results.cohorts should not be null');
+                    assert.equal(results.cohorts.length, 1, 'Expected cohorts to contain one item');
+                    assert.ok(results.cohorts[0].equals(users[2]._id), 'Expected saved cohorts id to match');
+                    done();
+                });
+            });
+
+            it('should error when adding non-ids', function(done){
+                User.addCohort(users[1]._id, {}, function(err, results){
+                    assert.ok(err != null);
+                    assert.ok(results == null);
+                    done();
+                });
+            });
+        });
     });
 });
