@@ -2,6 +2,7 @@
 var assert = require('assert'),
     connection = require('../../db_common'),
     User = require('../../../src/models/user'),
+    Img = require('../../../src/models/image'),
     async = require('async');
 require('should');
 
@@ -225,6 +226,41 @@ describe("User", function(){
                     assert.ok(results.cohorts != null, 'results.cohorts should not be null');
                     assert.equal(results.cohorts.length, 0, 'Expected cohorts to be empty');
                     done();
+                });
+            });
+        });
+
+        describe('avatarListing', function(){
+            it('should return empty object when no results are found', function(done){
+                User.avatarListing(function(err, results){
+                    assert.ifError(err);
+                    assert.ok(results != null, 'results should not be null');
+                    assert.equal(results.length, 0, 'Expected results to be empty');
+
+                    done();
+                });
+            });
+
+            it('should return an imageId/userId combo in the desired structure', function(done){
+                var img = new Img({dataURI: 'data:application/png;base64,0000'});
+                img.save(function(err, image){
+                    assert.ifError(err);
+
+                    users[4].avatar = image._id;
+                    users[4].save(function(err, user){
+                        assert.ifError(err);
+
+                        User.avatarListing(function(err, results){
+                            assert.ifError(err);
+                            assert.ok(results != null, 'results should not be null');
+                            assert.equal(results.length, 1, 'Expected results to be 1');
+                            assert.ok(results[0].image.equals(user.avatar), 'saved and queried avatars did not match');
+                            assert.ok(results[0].ref, 'user reference should not be null');
+                            assert.ok(results[0].ref.user_id.equals(user._id), 'user reference should equal the saved instance');
+
+                            done();
+                        });
+                    });
                 });
             });
         });
