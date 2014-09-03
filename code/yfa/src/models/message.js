@@ -11,7 +11,7 @@ var messageSchema = new mongoose.Schema({
 });
 
 function saveMessage(message, cb){
-    return message.save(function (err, message, affected) {
+    return message.save(function (err, message) {
         if (err) {
             return cb(err, null);
         }

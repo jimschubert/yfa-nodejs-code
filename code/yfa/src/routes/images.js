@@ -68,7 +68,7 @@ exports.getById = function(req, res){
                 lastChar = '',
                 len = result.dataURI.length;
 
-            for(var i = 0; i < len && lastChar != ','; i++){
+            for(var i = 0; i < len && lastChar !== ','; i++){
                 lastChar = result.dataURI[i];
                 header.push(lastChar);
             }

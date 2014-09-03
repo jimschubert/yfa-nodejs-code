@@ -38,10 +38,6 @@ userSchema.static('publicList',  function (skip, take, cb) {
 });
 
 userSchema.static('getMessages', function(id,cb){
-    if("function" !== typeof cb){
-        cb = function(){};
-    }
-
    return this.findOne({_id: id }, 'messages', null, cb);
 });
 
