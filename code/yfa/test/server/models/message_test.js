@@ -48,7 +48,7 @@ describe("Message", function() {
                 body: 'hello'
             }, function(err, result){
                 // this may be weird, but the result should be the 'to' user.
-                (err == null).should.be.true;
+                assert.ifError(err);
                 result.should.not.be.null;
                 result.should.be.an.object;
                 (result._id.equals(users[0]._id)).should.be.true;
@@ -67,7 +67,7 @@ describe("Message", function() {
                 attachment: att
             }, function(err, result){
                 // this may be weird, but the result should be the 'to' user.
-                (err == null).should.be.true;
+                assert.ifError(err);
                 result.should.not.be.null;
                 result.should.be.an.object;
                 (result._id.equals(users[0]._id)).should.be.true;
@@ -75,8 +75,7 @@ describe("Message", function() {
                 result.messages.length.should.be.exactly(1);
 
                 Message.findOne({_id: result.messages[0] }, null, null, function(err, result){
-                    console.log(result);
-                    (err == null).should.be.true;
+                    assert.ifError(err);
                     result.should.not.be.null;
                     result.should.be.an.object;
                     result.body.should.equal('hello');
@@ -84,6 +83,42 @@ describe("Message", function() {
                     (result.attachment.dataURI === undefined).should.be.true;
                     done();
                 });
+            });
+        });
+    });
+
+    describe('getAttachments', function(){
+        it('should retrieve a populated attachment with a valid id', function(done){
+            var att = { dataURI: 'data:image/png;base64,R0lGODlhAQABAIAAAP///wAAACwAAAAAAQABAAACAkQBADs=' };
+            Message.saveMessage({
+                to: users[0]._id,
+                from: users[1]._id,
+                body: 'hello',
+                attachment: att
+            }, function(err, result){
+                assert.ifError(err);
+
+                result.should.not.be.null;
+                result.should.be.an.object;
+                result.messages.should.be.an.array;
+
+                Message.getAttachments(result.messages[0], function(err, result){
+                    assert.ifError(err);
+                    result.should.be.an.object;
+                    result.attachment.should.be.an.object;
+                    result.attachment.dataURI.should.equal(att.dataURI);
+
+                    done();
+                });
+            });
+        });
+
+        it('should return null for invalid id', function(done){
+            Message.getAttachments('53dd79c1a8328f433a1f5cab', function(err, result){
+                assert.ifError(err);
+                (result == null).should.be.true;
+
+                done();
             });
         });
     });
