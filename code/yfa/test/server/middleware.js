@@ -200,4 +200,71 @@ describe('middleware', function () {
             });
         });
     });
+
+    describe('midFromQueryString middleware', function(){
+        var req;
+
+        beforeEach(function (done) {
+            req = {
+                query: {},
+                params: {}
+            };
+
+            done();
+        });
+
+        it('should go to next route when no query is provided (default key "mid")', function(done){
+            var handler = middleware.midFromQueryString();
+            handler(req, null, function(route){
+                assert.ok(undefined == req.params.mid);
+                assert.equal(route, 'route', 'Expected next("route") to be called');
+
+                done();
+            });
+        });
+
+        it('should go to next route when invalid query is provided (default key "mid")', function(done){
+            var handler = middleware.midFromQueryString();
+            req.query.mid = '_________';
+            handler(req, null, function(route){
+                assert.ok(undefined == req.params.mid);
+                assert.equal(route, 'route', 'Expected next("route") to be called');
+
+                done();
+            });
+        });
+
+        it('should set the contents of a valid req.query.mid to req.params.mid (default key "mid")', function(done){
+            var handler = middleware.midFromQueryString();
+            req.query.mid = '12345asdf';
+            handler(req, null, function(route){
+                assert.ok(undefined == route);
+                assert.equal(req.params.mid, req.query.mid, 'req.query.mid to be set on req.params.mid');
+
+                done();
+            });
+        });
+
+        it('should set the contents of a valid req.query.id parameter to req.params.mid (specified key "id")', function(done){
+            var handler = middleware.midFromQueryString('id');
+            req.query.id = '12345asdf';
+            handler(req, null, function(route){
+                assert.ok(undefined == route);
+                assert.equal(req.params.mid, req.query.id, 'req.query.id to be set on req.params.mid');
+
+                done();
+            });
+        });
+
+        it('should set the contents of a valid req.query.id parameter to req.params.id (specified key "id", specified prop "id")', function(done){
+            var handler = middleware.midFromQueryString('id', 'id');
+            req.query.id = '12345asdf';
+            handler(req, null, function(route){
+                assert.ok(undefined == route);
+                assert.equal(req.params.id, req.query.id, 'req.query.id to be set on req.params.mid');
+
+                done();
+            });
+        });
+    });
 });
