@@ -122,4 +122,45 @@ describe("Message", function() {
             });
         });
     });
+
+    describe('delete', function(){
+        var userWithMessage;
+        beforeEach(function(done){
+            var att = { dataURI: 'data:image/png;base64,R0lGODlhAQABAIAAAP///wAAACwAAAAAAQABAAACAkQBADs=' };
+            Message.saveMessage({
+                to: users[0]._id,
+                from: users[1]._id,
+                body: 'hello',
+                attachment: att
+            }, function(err, result){
+                assert.ifError(err);
+                userWithMessage = result;
+
+                result.messages.should.be.an.array;
+                result.messages.length.should.equal(1);
+
+                done();
+            });
+        });
+
+       it('should delete a message from a user object and from message collection', function(done){
+           Message.delete(userWithMessage.messages[0], function(err, result){
+               assert.ifError(err);
+               (result._id.equals(userWithMessage._id)).should.be.true;
+               result.messages.should.be.an.array;
+               result.messages.length.should.equal(0);
+
+               done();
+           });
+       });
+
+        it('should return null for invalid message id', function(done){
+            var badId = userWithMessage.messages[0].toString().replace(/[aeiu852]/g, 'o');
+            Message.delete(badId, function(err, result){
+                assert.ifError(err);
+                (result == null).should.be.true;
+                done();
+            });
+        });
+    });
 });
