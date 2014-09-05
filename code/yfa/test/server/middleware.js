@@ -2,6 +2,7 @@
 
 var middleware = require('../../src/middleware');
 var assert = require('assert');
+var HttpStatus = require('http-status');
 require('should'); // this modifies Object.prototype
 
 describe('middleware', function () {
@@ -264,6 +265,91 @@ describe('middleware', function () {
                 assert.equal(req.params.id, req.query.id, 'req.query.id to be set on req.params.mid');
 
                 done();
+            });
+        });
+    });
+
+    describe('constrainToUserAction middleware', function(){
+        var req, res;
+
+        beforeEach(function (done) {
+            req = {
+                user: { _id: null },
+                params: { mid: null }
+            };
+
+            res = {
+              onResponse: function(){},
+              problem: function(){
+                  res.problemArgs = [].slice.call(arguments);
+                  assert.ok("function" === typeof res.onResponse, "res.onResponse should always be bound.");
+                  res.onResponse();
+              }
+            };
+
+            done();
+        });
+
+        it('should fail when req.user._id is erroneously "null" (Tests strict equals)', function(done){
+            req.user._id = "null";
+            var handler = middleware.constrainToUserAction;
+            res.onResponse = function(){
+                assert.ok(Array.isArray(res.problemArgs), 'Expected args to be cached on res test object');
+                assert.equal(res.problemArgs.length, 3, 'Expected three problem args');
+                assert.equal(res.problemArgs[0], HttpStatus.FORBIDDEN,'Expected forbidden http status');
+                assert.equal(res.problemArgs[1],"You're not allowed to do that!" ,'Expected failure message');
+                assert.equal(res.problemArgs[2], "You can only modify your own user information.",'Expected failure details');
+                done();
+            };
+            handler(req, res, function(route){
+                assert.fail('This should not pass through to next route.');
+            });
+        });
+
+        it('should fail when req.user._id differs from req.params.mid', function(done){
+            req.user._id = "12345";
+            req.params.mid = "6789";
+            var handler = middleware.constrainToUserAction;
+            res.onResponse = function(){
+                assert.ok(Array.isArray(res.problemArgs), 'Expected args to be cached on res test object');
+                assert.equal(res.problemArgs.length, 3, 'Expected three problem args');
+                assert.equal(res.problemArgs[0], HttpStatus.FORBIDDEN,'Expected forbidden http status');
+                assert.equal(res.problemArgs[1],"You're not allowed to do that!" ,'Expected failure message');
+                assert.equal(res.problemArgs[2], "You can only modify your own user information.",'Expected failure details');
+                done();
+            };
+            handler(req, res, function(route){
+                assert.fail('This should not pass through to next route.');
+            });
+        });
+
+        it('should pass when req.user._id is same as req.params.mid', function(done){
+            req.user._id = "12345";
+            req.params.mid = "12345";
+            var handler = middleware.constrainToUserAction;
+            res.onResponse = function(){
+                assert.fail('This should invoke next()');
+            };
+            handler(req, res, function(route){
+                assert.ok("undefined" === typeof route, 'next() should be invoked without "route"');
+                done();
+            });
+        });
+
+        it('should fail if req.user is not set', function(done){
+            req.user = null;
+            req.params.mid = "12345";
+            var handler = middleware.constrainToUserAction;
+            res.onResponse = function(){
+                assert.ok(Array.isArray(res.problemArgs), 'Expected args to be cached on res test object');
+                assert.equal(res.problemArgs.length, 3, 'Expected three problem args');
+                assert.equal(res.problemArgs[0], HttpStatus.FORBIDDEN,'Expected forbidden http status');
+                assert.equal(res.problemArgs[1],"You're not allowed to do that!" ,'Expected failure message');
+                assert.equal(res.problemArgs[2], "You can only modify your own user information.",'Expected failure details');
+                done();
+            };
+            handler(req, res, function(route){
+                assert.fail('This should not pass through to next route.');
             });
         });
     });
