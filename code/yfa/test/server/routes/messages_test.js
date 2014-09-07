@@ -261,4 +261,54 @@ describe('messages route', function () {
             });
         });
     });
+
+    describe('#getAttachments', function(){
+        it('should not find attachments for invalid id', function(done){
+            req.params.mid = '53dd79c1a8328f433a1f5cab';
+
+            res.onResponse(function(){
+                assert.equal(res.statusCode, HttpStatus.NO_CONTENT);
+                assert.equal(res.actual, null);
+
+                done();
+            });
+
+            messages.getAttachments(req, res);
+        });
+
+        it('should retrieve an attachment for a valid message', function(done){
+
+            var att = { dataURI: 'data:image/png;base64,R0lGODlhAQABAIAAAP///wAAACwAAAAAAQABAAACAkQBADs=' };
+            async.waterfall([
+                function(done){
+                    Message.saveMessage({
+                        to: userCache[0]._id,
+                        from: userCache[1]._id,
+                        body: 'hello',
+                        attachment: att
+                    }, done);
+                },
+
+                function(saved, done){
+                    res.onResponse(function(){
+                        assert.equal(res.statusCode, HttpStatus.OK);
+                        assert.ok("object" === typeof res.actual);
+                        assert.ok("object" === typeof res.actual.attachment);
+
+                        assert.equal(res.actual.attachment.dataURI, att.dataURI);
+
+                        done();
+                    });
+
+                    req.params.mid = saved.messages[0];
+                    messages.getAttachments(req, res);
+                }
+            ], function(err){
+                assert.ifError(err);
+
+                done();
+            });
+
+        });
+    });
 });

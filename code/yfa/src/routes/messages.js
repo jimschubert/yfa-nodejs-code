@@ -46,6 +46,10 @@ exports.getAttachments = function(req, res){
                 "Could not get message's attachment(s) due to internal error");
         }
 
+        if(!results){
+            return res.json(HttpStatus.NO_CONTENT);
+        }
+
         return res.json(HttpStatus.OK, results);
     });
 };
