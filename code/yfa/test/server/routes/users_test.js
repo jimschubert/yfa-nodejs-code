@@ -520,4 +520,31 @@ describe('users route', function () {
        });
     });
 
+    describe('#removeCohortFromUser', function(){
+        it('should remove a cohort from a user', function(done){
+            userCache[0].cohorts.push(userCache[25]._id);
+
+            userCache[0].save(function(err, user){
+                assert.ifError(err);
+                assert.ok(Array.isArray(user.cohorts));
+                assert.ok(user.cohorts.length, 1);
+
+                assert.ok(user.cohorts[0] == userCache[25]._id.toString());
+
+                res.onResponse(function(){
+                    assert.equal(res.statusCode, HttpStatus.OK);
+                    assert.ok(Array.isArray(res.actual) === false);
+                    assert.ok(Array.isArray(res.actual.cohorts));
+
+                    assert.equal(res.actual.cohorts.indexOf(userCache[25]._id), -1);
+                    assert.equal(res.actual.cohorts.length, 0);
+                    done();
+                });
+
+                req.params.mid = userCache[0]._id;
+                req.params.id = userCache[25]._id;
+                users.removeCohortFromUser(req,res);
+            });
+        });
+    });
 });
