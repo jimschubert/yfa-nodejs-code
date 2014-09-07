@@ -5,6 +5,7 @@ var users = require('../../../src/routes/users'),
     middleware = require('../../../src/middleware'),
     connection = require('../../db_common'),
     User = require('../../../src/models/user'),
+    Message = require('../../../src/models/message'),
     assert = require('assert'),
     HttpStatus = require('http-status'),
     async = require('async');
@@ -430,29 +431,24 @@ describe('users route', function () {
             users.getMessages(req, res);
         });
 
-        // Skipped: Messages need to be saved through the Messages model
-        it.skip('should return an array of messages when more than one message is stored.', function(done){
-            var messages = [{first:"asdf"}, {second: "fdas"}];
+        it('should return an array of messages when more than one message is stored.', function(done){
+            var message1 = new Message({to: userCache[0]._id, from: userCache[1]._id, body: "Hello"});
+            var message2 = new Message({to: userCache[0]._id, from: userCache[1]._id, body: "Are you there?"});
 
-            User.findOne({}, function(err, doc){
+            // note: saveMessage is a custom function which also saves to the user object.
+            Message.saveMessage(message1, function(err){
                 assert.ifError(err);
-                assert.ok(doc !== null);
-
-                req.params.mid = doc._id;
-
-                doc.messages = messages;
-                doc.save(function(err,doc){
+                Message.saveMessage(message2, function(err){
                     assert.ifError(err);
-                    assert.ok(doc !== null);
 
+                    req.params.mid = userCache[0]._id.toString();
                     res.onResponse(function(){
                         assert.equal(res.statusCode, HttpStatus.OK);
                         assert.ok(Array.isArray(res.actual) === false);
                         assert.ok(Array.isArray(res.actual.messages));
 
                         // Note: .slice() here because messages is still a mongoose array-like object
-                        assert.deepEqual(res.actual.messages.slice(), messages);
-
+                        assert.deepEqual(res.actual.messages.slice(), [message1._id, message2._id]);
                         done();
                     });
 
