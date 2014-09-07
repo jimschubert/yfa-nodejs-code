@@ -457,4 +457,46 @@ describe('users route', function () {
             });
         });
     });
+
+    describe('#getCohortsById', function(){
+        it('should return empty array for user without friends', function(done){
+            req.params.mid = userCache[0]._id;
+
+            res.onResponse(function(){
+                assert.equal(res.statusCode, HttpStatus.OK);
+                assert.ok(Array.isArray(res.actual) === false);
+                assert.ok(Array.isArray(res.actual.cohorts));
+                assert.ok(res.actual.cohorts.length == 0);
+                done();
+            });
+            users.getCohortsById(req,res);
+        });
+
+        it('should return cohorts when user has cohorts', function(done){
+            req.params.mid = userCache[0]._id;
+
+            res.onResponse(function(){
+                assert.equal(res.statusCode, HttpStatus.OK);
+                assert.ok(Array.isArray(res.actual) === false);
+                assert.ok(Array.isArray(res.actual.cohorts));
+                assert.ok(res.actual.cohorts.length == 2);
+
+                assert.ok(res.actual.cohorts.indexOf(userCache[1]._id) > -1);
+                assert.ok(res.actual.cohorts.indexOf(userCache[2]._id) > -1);
+                done();
+            });
+
+            userCache[0].cohorts.push(userCache[1]._id);
+            userCache[0].cohorts.push(userCache[2]._id);
+
+            userCache[0].save(function(err, user){
+                assert.ifError(err);
+
+                // make sure they were saved and a fail isn't because of our route
+                assert.equal(user.cohorts.length, 2);
+
+                users.getCohortsById(req,res);
+            });
+        });
+    });
 });
