@@ -12,7 +12,9 @@ describe("Image", function() {
     });
 
     after(function (done) {
-        db.close(done);
+        Img.remove({}, function(){
+            db.close(done);
+        });
     });
 
     describe("static functions", function() {

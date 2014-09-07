@@ -84,6 +84,9 @@ exports.getById = function(req, res){
 
             return res.end(buffer);
         } else {
+            if(result === null){
+                return res.json(HttpStatus.NO_CONTENT);
+            }
             return res.json(HttpStatus.OK, result);
         }
     });
