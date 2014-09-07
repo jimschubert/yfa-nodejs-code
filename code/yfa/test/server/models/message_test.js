@@ -27,7 +27,9 @@ describe("Message", function() {
     });
 
     after(function (done) {
-        db.close(done);
+        Message.remove({}, function(){
+            db.close(done);
+        });
     });
 
     beforeEach(function(done){
