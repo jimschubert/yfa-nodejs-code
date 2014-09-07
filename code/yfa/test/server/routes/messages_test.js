@@ -196,4 +196,69 @@ describe('messages route', function () {
             messages.send(req, res);
         });
     });
+
+    describe('#delete', function(){
+        it('should not fail for invalid id', function(done){
+            req.params.mid = '53dd79c1a8328f433a1f5cab';
+
+            res.onResponse(function(){
+                assert.equal(res.statusCode, HttpStatus.OK);
+                assert.ok("object" === typeof res.actual);
+
+                // should return an empty object (this empty object for invalid ids
+                // prevents users from trying to guess IDs to delete)
+                assert.equal(Object.keys(res.actual).length, 0);
+
+                done();
+            });
+
+            messages.delete(req, res);
+        });
+
+        it('should delete a message and remove reference from user object', function(done){
+
+            async.waterfall([
+                function saveMessage(done){
+                    Message.saveMessage({
+                        to: userCache[0]._id,
+                        from: userCache[1]._id,
+                        body: 'hello',
+                        attachment: null
+                    }, function(err, user){
+                        // Remember, the result is the "to" user
+                        done(err, user.messages[0]);
+                    })
+                },
+
+                function makeCall(messageId, done){
+                    res.onResponse(function(){
+                        assert.equal(res.statusCode, HttpStatus.OK);
+                        assert.ok("object" === typeof res.actual);
+
+                        // should return an empty object (this empty object for invalid ids
+                        // prevents users from trying to guess IDs to delete)
+                        assert.equal(Object.keys(res.actual).length, 0);
+
+                        done();
+                    });
+
+                    req.params.mid = messageId;
+                    messages.delete(req, res);
+                },
+
+                function checkToUser(done){
+                    User.findOne({_id: userCache[0]._id}, null, null, function(err, user){
+                        assert.ok("object" === typeof user);
+                        assert.ok(Array.isArray(user.messages));
+                        assert.equal(user.messages.length, 0);
+                        done(err);
+                    })
+                }
+            ], function(err){
+                assert.ifError(err);
+
+                done();
+            });
+        });
+    });
 });
