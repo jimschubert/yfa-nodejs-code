@@ -125,6 +125,7 @@ app.get(apiBase + '/images/:mid',
 
 app.get('/compiled/*?', routes.partial);
 
+app.get('/', routes.index);
 app.get('/login', page('login.html'));
 app.get('/logout', page('logout.html'));
 app.get('/authentication', page('authentication.html'));
