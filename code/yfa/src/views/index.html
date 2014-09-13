@@ -55,9 +55,15 @@
                         </ul>
                     </li>
                 </ul>
-                <form class="navbar-form pull-right"><input type="text" placeholder="Email" class="span2"><input
-                        type="password" placeholder="Password" class="span2">
-                    <button type="submit" class="btn">Sign in</button>
+                <form class="navbar-form pull-right">
+                    <% if(user) { %>
+                       <div class="welcome">
+                           Hi, <%= user.firstName %>!
+                           <a href="/auth/logout" target="_self"><i class="icon-off icon-white"></i></a>
+                       </div>
+                    <% } else { %>
+                    <a href="/auth/facebook" class="facebook" target="_self"></a>
+                    <% } %>
                 </form>
             </div>
         </div>
