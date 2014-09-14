@@ -7,14 +7,8 @@ angular.module('myApp', ['myApp.filters', 'myApp.services', 'myApp.directives', 
             templateUrl: '/partials/index.html',
             controller: 'IndexCtrl'
         });
-        $routeProvider.when('/contact', {
-            templateUrl: '/partials/contact.html',
-            controller: 'PagesCtrl'
-        });
-        $routeProvider.when('/about', {
-            templateUrl: '/partials/about.html',
-            controller: 'PagesCtrl'
-        });
+
+        $routeProvider.otherwise({ redirectTo: '/' });
     }]);
 
 (function(){
