@@ -37,6 +37,47 @@ a.facebook {
     margin: 2px 0;
 }
 
+.user-pager-item {
+    display: inline-block;
+    color: rgba(0,0,0,0.3);
+    font-size:25px;
+    height:25px;
+    width:25px;
+    margin:0 5px;
+    padding:0;
+    line-height:40px;
+}
+
+.user-pager-item span,
+.user-pager-item img {
+    display:block;
+    height:25px;
+    width:25px;
+    margin:0;
+    padding:0;
+    line-height:40px;
+}
+
+.pager-btn {
+    height: 40px;
+    width: 30px;
+    border: 0;
+    background: transparent;
+    color: black;
+    text-align: center;
+    line-height: 2.5em;
+    vertical-align: middle;
+    text-decoration: none;
+    cursor:pointer;
+}
+.pager-btn:hover {
+    text-decoration: none;
+}
+.pager-btn:active {
+    border:1px inset;
+    border-radius:5px;
+}
+
 @media (min-width: 10px) and (max-width: 979px) {
  body {
      padding-top:60px;

@@ -20,6 +20,15 @@
                                 cache: false
                             });
                         }
+                    },
+                    images: {
+                        getById: function(id){
+                            return $http({
+                                url: apiBase + '/images/' + id,
+                                method: 'GET',
+                                cache: false
+                            });
+                        }
                     }
                 };
             }

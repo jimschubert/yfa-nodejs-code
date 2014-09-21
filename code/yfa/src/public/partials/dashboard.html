@@ -1,4 +1,13 @@
 <alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg}}</alert>
-<div>
+<div style="min-height: 500px;">
     <h2>Hello!</h2>
+</div>
+
+<div class="bottom well well-sm" ng-if="users">
+    <a class="pager-btn pull-left">&laquo;</a>
+    <a ng-repeat="user in users" class="user-pager-item" title="{{user.username}}">
+        <img ng-src="{{user.img}}" ng-init="loadImage(user)" ng-if="user.avatar" />
+        <span class="glyphicon glyphicon-user" ng-if="!user.avatar"></span>
+    </a>
+    <a class="pager-btn pull-right">&raquo;</a>
 </div>
