@@ -37,7 +37,7 @@
         IndexCtrl.call(this, $scope);
 
         Api.users.list().success(function(data){
-            $scope.users = data;
+            $scope.users = data.results;
         });
 
         $scope.loadImage = function(user){
@@ -45,7 +45,7 @@
             .success(function(data){
                 user.img = data && data.dataURI;
             });
-        }
+        };
     }
     DashboardCtrl.$inject = ['$scope', 'Api'];
 

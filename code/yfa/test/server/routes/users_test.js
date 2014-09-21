@@ -118,9 +118,10 @@ describe('users route', function () {
             res.onResponse(function(){
                 assert.equal(res.statusCode, HttpStatus.OK);
 
-                assert.ok(Array.isArray(res.actual));
+                assert.ok(res.actual && res.actual.results);
+                assert.ok(Array.isArray(res.actual.results));
 
-                assert.equal(res.actual.length, 25);
+                assert.equal(res.actual.results.length, 25);
 
                 done();
             });
@@ -136,9 +137,10 @@ describe('users route', function () {
             res.onResponse(function(){
                 assert.equal(res.statusCode, HttpStatus.OK);
 
-                assert.ok(Array.isArray(res.actual));
+                assert.ok(res.actual && res.actual.results);
+                assert.ok(Array.isArray(res.actual.results));
 
-                assert.equal(res.actual.length, 20);
+                assert.equal(res.actual.results.length, 20);
 
                 done();
             });

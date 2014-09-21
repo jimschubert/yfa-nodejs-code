@@ -25,7 +25,7 @@ module.exports = function (grunt) {
                 src: 'Gruntfile.js'
             },
             app: {
-                src: ['src/**/*.js', "!src/public/lib/**/*.js", "!src/public/javascripts/vendor/**/*.js"]
+                src: ['src/**/*.js', "!src/public/lib/**/*.js", "!src/public/javascripts/vendor/**/*.js","!src/public/**/*.min.js"]
             },
             test: {
                 src: ['test/**/*.js', "!test/client/**/*.js",]

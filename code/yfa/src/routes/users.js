@@ -38,7 +38,12 @@ exports.list = function (req, res) {
         if(results === null || results.length === 0){
             return res.json(HttpStatus.NO_CONTENT);
         } else {
-            return res.json(HttpStatus.OK, results);
+            User.count({}, function(err, count){
+                return res.json(HttpStatus.OK, {
+                    meta: { total: count || 0 },
+                    results: results
+                });
+            });
         }
     });
 };
