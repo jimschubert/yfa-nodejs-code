@@ -73,7 +73,7 @@ a.facebook {
 .pager-btn:hover {
     text-decoration: none;
 }
-.pager-btn:active {
+.pager-btn:not(.disabled):active {
     border:1px inset;
     border-radius:5px;
 }

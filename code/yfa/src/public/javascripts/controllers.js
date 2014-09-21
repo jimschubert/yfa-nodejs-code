@@ -36,7 +36,13 @@
     function DashboardCtrl($scope, Api) {
         IndexCtrl.call(this, $scope);
 
+        $scope.page = 0;
+        $scope.hasNext = function(){
+            return $scope.totalUsers && $scope.totalUsers > (($scope.page + 1)*25);
+        };
+
         Api.users.list().success(function(data){
+            $scope.totalUsers = data.meta.total;
             $scope.users = data.results;
         });
 
@@ -45,6 +51,34 @@
             .success(function(data){
                 user.img = data && data.dataURI;
             });
+        };
+
+        $scope.next = function(){
+            if($scope.hasNext()) {
+                $scope.page = $scope.page + 1;
+                var options = {
+                    skip: $scope.page * 25,
+                    take: 25
+                };
+                Api.users.list(options).success(function (data) {
+                    $scope.totalUsers = data.meta.total;
+                    $scope.users = data.results;
+                });
+            }
+        };
+
+        $scope.previous = function(){
+            if($scope.page > 0) {
+                $scope.page = $scope.page - 1;
+                var options = {
+                    skip: $scope.page * 25,
+                    take: 25
+                };
+                Api.users.list(options).success(function (data) {
+                    $scope.totalUsers = data.meta.total;
+                    $scope.users = data.results;
+                });
+            }
         };
     }
     DashboardCtrl.$inject = ['$scope', 'Api'];
