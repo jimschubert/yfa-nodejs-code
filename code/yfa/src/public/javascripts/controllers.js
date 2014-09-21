@@ -2,7 +2,7 @@
     'use strict';
 
     /* Controllers */
-    angular.module('myApp.controllers', ['ui.bootstrap'])
+    angular.module('myApp.controllers', ['myApp.compiled', 'ui.bootstrap'])
         .controller('IndexCtrl', [
                     '$scope',
             function($scope) {
@@ -13,8 +13,9 @@
             }
         ])
         .controller('NavigationCtrl', [
-                    '$scope','$location',
-            function($scope , $location){
+                    '$scope','$location','USER_CONTEXT',
+            function($scope , $location , USER_CONTEXT){
+                console.log(USER_CONTEXT);
                 $scope.isCurrent = function (me) {
                     var currentRoute = $location.path() || '/';
                     return me === currentRoute ? 'active' : '';

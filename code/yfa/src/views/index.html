@@ -15,13 +15,28 @@
     <title></title>
     <script src="//www.google-analytics.com/ga.js"></script>
     <script src="/javascripts/vendor/modernizr-2.6.2-respond-1.1.0.min.js"></script>
-</head>
+    <script type="text/javascript">
+        function deepFreeze (o) {
+            var prop, key;
 
-<style>
-    [ng-cloak] {
-        display: none;
-    }
-</style>
+            // Freeze any unfrozen object
+            if(!Object.isFrozen(o))
+                Object.freeze(o);
+
+            for (key in o) {
+                if (o.hasOwnProperty(key) && o[key] instanceof Object) {
+                    deepFreeze(o[key]);
+                }
+            }
+        }
+    </script>
+    <style>
+        [ng-cloak] {
+            display: none;
+        }
+    </style>
+
+</head>
 
 <body>
 
@@ -70,6 +85,19 @@
 
 <script src="/javascripts/vendor/angular/angular.min.js"></script>
 <script src="/javascripts/vendor/angular/angular-route.min.js"></script>
+
+<script type="text/javascript">
+    (function(angular){
+        var ctx = {};
+
+        // <% if(user) { %>
+        ctx.id = '<%= user._id %>';
+        // <%}%>
+        deepFreeze(ctx);
+        angular.module('myApp.compiled',[])
+            .constant('USER_CONTEXT', ctx);
+    })(angular);
+</script>
 
 <script src="/javascripts/vendor/ui-bootstrap-tpls-0.11.0.min.js"></script>
 <script src="/javascripts/vendor/bootstrap.min.js"></script>
