@@ -33,15 +33,11 @@
      * @param Api
      * @constructor
      */
-    function DashboardCtrl($scope, Api) {
+    function DashboardCtrl($scope) {
         IndexCtrl.call(this, $scope);
 
-        Api.users.list().success(function(data){
-            $scope.totalUsers = data.meta.total;
-            $scope.users = data.results;
-        });
     }
-    DashboardCtrl.$inject = ['$scope', 'Api'];
+    DashboardCtrl.$inject = ['$scope'];
 
     _extend(DashboardCtrl, IndexCtrl);
 
