@@ -12,6 +12,13 @@
                 var apiBase = '/api/v1';
                 return {
                     users: {
+                        getById: function (id){
+                            return $http({
+                                url: apiBase + '/users/' + id,
+                                method: 'GET',
+                                cache: false
+                            });
+                        },
                         list: function (options){
                             return $http({
                                 url: apiBase + '/users',

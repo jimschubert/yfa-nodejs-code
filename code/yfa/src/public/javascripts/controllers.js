@@ -31,13 +31,18 @@
      * DashboardCtrl handles authenticated index
      * @param $scope
      * @param Api
+     * @param USER_CONTEXT
      * @constructor
      */
-    function DashboardCtrl($scope) {
+    function DashboardCtrl($scope, Api, USER_CONTEXT) {
         IndexCtrl.call(this, $scope);
 
+        Api.users.getById(USER_CONTEXT.id)
+            .success(function(data){
+               $scope.user = data
+            });
     }
-    DashboardCtrl.$inject = ['$scope'];
+    DashboardCtrl.$inject = ['$scope', 'Api', 'USER_CONTEXT'];
 
     _extend(DashboardCtrl, IndexCtrl);
 

@@ -6,9 +6,10 @@
             <h2 class="panel-title">cohorts.</h2>
         </div>
         <div class="panel-body">
-            <div ng-if="!cohorts || cohorts.length < 1">
+            <div ng-if="user.cohorts.length < 1">
                 You have no friends :(
             </div>
+            <div ng-repeat="cohort in user.cohorts" ng-bind="cohort"></div>
         </div>
     </div>
 
