@@ -78,6 +78,20 @@ a.facebook {
     border-radius:5px;
 }
 
+.cohorts-panel {
+    top:60px;
+    left:10px;
+    padding:0;
+    height:350px;
+    z-index:999;
+    overflow:scroll;
+}
+
+.message-panel {
+    min-height:360px;
+    max-height: 500px;
+}
+
 @media (min-width: 10px) and (max-width: 979px) {
  body {
      padding-top:60px;

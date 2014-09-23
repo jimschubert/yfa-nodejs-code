@@ -1,6 +1,24 @@
-<alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg}}</alert>
-<div style="min-height: 500px;">
-    <h2>Hello!</h2>
+<div class="row">
+    <div class="col-lg-2 col-md-3 col-sm-3 hidden-xs">
+    </div>
+    <div class="col-lg-2 col-md-3 col-sm-3 hidden-xs hidden-print panel panel-default affix cohorts-panel">
+        <div class="panel-heading">
+            <h2 class="panel-title">cohorts.</h2>
+        </div>
+        <div class="panel-body">
+            <div ng-if="!cohorts || cohorts.length < 1">
+                You have no friends :(
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-9 col-md-9 col-sm-9 col-xs-12 message-panel">
+        <alert ng-repeat="alert in alerts"
+               type="{{alert.type}}"
+               close="closeAlert($index)">{{alert.msg}}</alert>
+
+        <h2>Hello!</h2>
+    </div>
 </div>
 
 <user-pager></user-pager>
