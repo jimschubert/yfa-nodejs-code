@@ -1,0 +1,13 @@
+<div class="row">
+    <div>
+        <img ng-src="{{cohort.img}}" ng-if="cohort.img" />
+        <span class="glyphicon glyphicon-user ng-scope" ng-if="!cohort.img"></span>
+    </div>
+    <div>
+        <span ng-bind="cohort.username" ng-class="cohort.state"></span>
+    </div>
+    <div>
+        <button ng-click="deleteCohort()"
+                class="glyphicon glyphicon-remove-circle"></button>
+    </div>
+</div>

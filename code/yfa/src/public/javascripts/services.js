@@ -28,6 +28,19 @@
                             });
                         }
                     },
+                    cohorts: {
+                        remove: function(cohortId, userId){
+                            var options = {
+                                user_id: userId
+                            };
+                            return $http({
+                                url: apiBase + '/cohorts/'+cohortId,
+                                params: options,
+                                method: 'DELETE',
+                                cache: false
+                            });
+                        }
+                    },
                     images: {
                         getById: function(id){
                             return $http({

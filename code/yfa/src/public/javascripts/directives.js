@@ -115,4 +115,48 @@
                 };
             }
         ]);
+
+    function CohortsItemController($scope, Api) {
+        Api.users.getById($scope.cohortId)
+            .success(function (data) {
+                $scope.cohort = data;
+
+                if ($scope.cohort.avatar) {
+                    Api.images.getById(data.avatar)
+                        .success(function (data) {
+                            $scope.cohort.img = data && data.dataURI;
+                        });
+                }
+            })
+            .error(function () {
+                $scope.cohort = {};
+            });
+
+        $scope.deleteCohort = function () {
+            Api.cohorts.remove($scope.cohortId, $scope.userId)
+                .success(function () {
+                    $scope.onCohortDeleted({ id: $scope.cohortId });
+                    $scope.$destroy();
+                });
+        }
+    }
+    CohortsItemController.$inject = ['$scope', 'Api'];
+
+    angular.module('myApp.directives')
+        .directive('cohortItem',[
+            function(){
+                return {
+                    restrict: 'E',
+                    scope: {
+                        userId: '=',
+                        cohortId: '=',
+                        onCohortDeleted: '&'
+                    },
+                    controller: CohortsItemController,
+                    templateUrl: 'partials/cohort-item.tpl.html',
+                    link: function (scope, element, attrs) {
+                    }
+                }
+            }
+        ]);
 })(angular);

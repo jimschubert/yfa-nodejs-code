@@ -41,6 +41,16 @@
             .success(function(data){
                $scope.user = data
             });
+
+        $scope.removeCohort = function(id){
+            if(angular.isArray($scope.user.cohorts)){
+                var index = $scope.user.cohorts.indexOf(id);
+
+                if(index > -1) {
+                    $scope.user.cohorts.splice(index,1);
+                }
+            }
+        };
     }
     DashboardCtrl.$inject = ['$scope', 'Api', 'USER_CONTEXT'];
 

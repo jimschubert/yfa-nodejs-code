@@ -9,7 +9,10 @@
             <div ng-if="user.cohorts.length < 1">
                 You have no friends :(
             </div>
-            <div ng-repeat="cohort in user.cohorts" ng-bind="cohort"></div>
+            <cohort-item ng-repeat="cohort in user.cohorts"
+                         cohort-id="cohort"
+                         user-id="user._id"
+                         on-cohort-deleted="removeCohort(id)"/>
         </div>
     </div>
 
