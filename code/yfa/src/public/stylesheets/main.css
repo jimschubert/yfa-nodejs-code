@@ -92,6 +92,10 @@ a.facebook {
     max-height: 500px;
 }
 
+.drag-over-accept {
+    border:2px dotted #2cec00;
+}
+
 @media (min-width: 10px) and (max-width: 979px) {
  body {
      padding-top:60px;

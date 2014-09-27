@@ -5,7 +5,12 @@
         <div class="panel-heading">
             <h2 class="panel-title">cohorts.</h2>
         </div>
-        <div class="panel-body">
+        <div class="panel-body"
+             drop="onDrop($data, $event)"
+             drop-effect="copy"
+             drop-accept="'json/user-pager-object'"
+             drag-over-class="drag-over-accept"
+             style="min-height:300px;">
             <div ng-if="user.cohorts.length < 1">
                 You have no friends :(
             </div>

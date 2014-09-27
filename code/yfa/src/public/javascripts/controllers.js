@@ -51,6 +51,16 @@
                 }
             }
         };
+
+        $scope.onDrop = function(data /*, event */){
+            var cohort = data['json/user-pager-object'];
+            if(cohort){
+                Api.cohorts.add(cohort._id, USER_CONTEXT.id)
+                    .success(function(data){
+                        console.log(data);
+                    });
+            }
+        };
     }
     DashboardCtrl.$inject = ['$scope', 'Api', 'USER_CONTEXT'];
 
