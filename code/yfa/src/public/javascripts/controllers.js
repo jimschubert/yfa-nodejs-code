@@ -56,8 +56,11 @@
             var cohort = data['json/user-pager-object'];
             if(cohort){
                 Api.cohorts.add(cohort._id, USER_CONTEXT.id)
-                    .success(function(data){
-                        console.log(data);
+                    .success(function(){
+                        if($scope.user.cohorts.indexOf(cohort._id) === -1)
+                        {
+                            $scope.user.cohorts.push(cohort._id);
+                        }
                     });
             }
         };
