@@ -45,7 +45,8 @@ a.facebook {
     width:25px;
     margin:0 5px;
     padding:0;
-    line-height:40px;
+    line-height:25px;
+    position: relative;
 }
 
 .user-pager-item span,
@@ -55,20 +56,19 @@ a.facebook {
     width:25px;
     margin:0;
     padding:0;
-    line-height:40px;
 }
 
 .pager-btn {
-    height: 40px;
-    width: 30px;
+    height: 25px;
+    width: 25px;
     border: 0;
     background: transparent;
     color: black;
     text-align: center;
-    line-height: 2.5em;
+    line-height: 25px;
     vertical-align: middle;
     text-decoration: none;
-    cursor:pointer;
+    cursor: pointer;
 }
 .pager-btn:hover {
     text-decoration: none;
@@ -133,6 +133,17 @@ a.facebook {
 
 .panel-body.drag-over-accept {
     padding:13px;
+}
+
+.user-pager-item.selected-user::after {
+    /* requires this file included after bootstrap.css */
+    font-family: 'Glyphicons Halflings';
+    content:"\e013";
+    color: #00ff00;
+    position: absolute;
+    font-size: 15px;
+    bottom:-10px;
+    right:3px;
 }
 
 @media (min-width: 10px) and (max-width: 979px) {

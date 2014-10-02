@@ -65,6 +65,9 @@
             function($window){
                 return {
                     restrict: 'E',
+                    scope: {
+                      selectedUsers: '='
+                    },
                     controller: UserPagerController,
                     templateUrl: 'partials/user-pager.tpl.html',
                     link: function (scope, element, attrs) {

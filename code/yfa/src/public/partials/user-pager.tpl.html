@@ -1,6 +1,7 @@
 <div class="bottom" ng-class="{'well well-sm': users}">
     <a class="pager-btn pull-left" ng-click="previous()" ng-class="{'disabled': page == 0}" ng-show="users">&laquo;</a>
     <a ng-repeat="user in users" class="user-pager-item" title="{{user.username}}"
+       ng-class="{'selected-user': selectedUsers.indexOf(user._id) > -1 }"
        draggable="true"
        effect-allowed="copy"
        draggable-type="user-pager-object"
