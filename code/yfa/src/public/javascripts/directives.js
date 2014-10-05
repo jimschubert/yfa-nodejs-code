@@ -141,7 +141,7 @@
                     $scope.onCohortDeleted({ id: $scope.cohortId });
                     $scope.$destroy();
                 });
-        }
+        };
     }
     CohortsItemController.$inject = ['$scope', 'Api'];
 
@@ -159,7 +159,7 @@
                     templateUrl: 'partials/cohort-item.tpl.html',
                     link: function (scope, element, attrs) {
                     }
-                }
+                };
             }
         ]);
 })(angular);

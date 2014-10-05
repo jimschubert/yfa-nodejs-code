@@ -27,6 +27,12 @@
                close="closeAlert($index)">{{alert.msg}}</alert>
 
         <h2>Hello!</h2>
+
+        <div ng-controller="MessageCtrl">
+            <div ng-repeat="message in messages" kendo-window>
+                <span ng-bind="message"></span>
+            </div>
+        </div>
     </div>
 </div>
 

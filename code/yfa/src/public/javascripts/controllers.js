@@ -31,15 +31,22 @@
      * DashboardCtrl handles authenticated index
      * @param $scope
      * @param Api
+     * @param MessageService
      * @param USER_CONTEXT
      * @constructor
      */
-    function DashboardCtrl($scope, Api, USER_CONTEXT) {
+    function DashboardCtrl($scope, Api, MessageService, USER_CONTEXT) {
         IndexCtrl.call(this, $scope);
 
         Api.users.getById(USER_CONTEXT.id)
             .success(function(data){
-               $scope.user = data
+               $scope.user = data;
+
+                if(angular.isArray(data.messages)){
+                    angular.forEach(data.messages, function(value){
+                        MessageService.addMessage(value);
+                    });
+                }
             });
 
         $scope.removeCohort = function(id){
@@ -65,7 +72,7 @@
             }
         };
     }
-    DashboardCtrl.$inject = ['$scope', 'Api', 'USER_CONTEXT'];
+    DashboardCtrl.$inject = ['$scope', 'Api', 'MessageService', 'USER_CONTEXT'];
 
     _extend(DashboardCtrl, IndexCtrl);
 
@@ -80,6 +87,18 @@
                     var currentRoute = $location.path() || '/';
                     return me === currentRoute ? 'active' : '';
                 };
+            }
+        ])
+        .controller('MessageCtrl', [
+                    '$scope','MessageService',
+            function($scope , MessageService){
+                function setMessages(){
+                    $scope.messages = MessageService.list();
+                    console.log($scope.messages);
+                }
+
+                $scope.$on('messageAdded', setMessages);
+                $scope.$on('messageRemoved', setMessages);
             }
         ]);
 })(angular);

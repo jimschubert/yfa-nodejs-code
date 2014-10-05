@@ -65,4 +65,33 @@
                 };
             }
         ]);
+
+    angular.module('myApp.services')
+        .service('MessageService', [
+                    '$rootScope',
+            function($rootScope){
+                var service = {}, messages = [];
+
+                service.addMessage = function(id){
+                    if(messages.indexOf(id) === -1){
+                        messages.push(id);
+                        $rootScope.$broadcast('messageAdded', { id: id });
+                    }
+                };
+
+                service.removeMessage = function(id){
+                    var index = messages.indexOf(id);
+                    if(index > -1){
+                        messages.splice(index, 1);
+                        $rootScope.$broadcast('messageRemoved', { id: id });
+                    }
+                };
+
+                service.list = function(){
+                    return angular.copy(messages);
+                };
+
+                return service;
+            }
+        ]);
 })(angular);
