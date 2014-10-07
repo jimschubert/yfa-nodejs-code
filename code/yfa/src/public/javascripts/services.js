@@ -188,7 +188,11 @@
                         return false;
                     },
                     shouldContainMessage: function(message){
-                        return this.target === message.to || this.target === message.from;
+                        if(message.to === USER_CONTEXT.id){
+                            return this.target === message.from;
+                        } else {
+                            return this.target === message.to;
+                        }
                     }
                 };
 
