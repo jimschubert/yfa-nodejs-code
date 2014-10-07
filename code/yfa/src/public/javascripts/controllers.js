@@ -90,11 +90,36 @@
             }
         ])
         .controller('MessageCtrl', [
-                    '$scope','MessageService',
-            function($scope , MessageService){
+                    '$scope','MessageService','Api',
+            function($scope , MessageService , Api){
                 function setMessages(){
                     $scope.conversations = MessageService.list();
                 }
+
+                var imageCache = {};
+                $scope.getUserIcon = function(message){
+                    if(!angular.isDefined(message.image)) {
+                        var sender = $scope.user.messages.indexOf(message._id) !== -1,
+                            senderId = sender ? message.from : message.to;
+
+                        if(angular.isDefined(imageCache[senderId])) {
+                            // Load from local cache
+                            message.image = imageCache[senderId];
+                        } else {
+                            // query server.
+                            Api.users.getById(senderId)
+                                .success(function(user){
+                                    if(!user.avatar){ return; }
+
+                                    Api.images.getById(user.avatar)
+                                        .success(function (data) {
+                                            imageCache[senderId] = data && data.dataURI;
+                                            message.image = imageCache[senderId];
+                                        });
+                                });
+                        }
+                    }
+                };
 
                 $scope.$on('messageAdded', setMessages);
                 $scope.$on('messageRemoved', setMessages);

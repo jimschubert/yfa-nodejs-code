@@ -81,8 +81,8 @@ exports.getById = function(req, res){
         }
 
         // Don't allow users to retrieve messages that don't belong to them!
-        if(message.to.toString() !== req.user._id.toString()
-            && message.from.toString() !== req.user._id.toString()) {
+        if(message.to.toString() !== req.user._id.toString() &&
+            message.from.toString() !== req.user._id.toString()) {
             return res.json(HttpStatus.NO_CONTENT);
         }
 

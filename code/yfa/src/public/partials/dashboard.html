@@ -29,7 +29,30 @@
         <h2>Hello!</h2>
 
         <div ng-controller="MessageCtrl">
-            <div ng-repeat="conversation in conversations" kendo-window>
+            <div ng-repeat="conversation in conversations track by conversation.target" kendo-window
+                 k-min-height="120"
+                 k-max-height="500"
+                 k-min-width="275"
+                 k-max-width="450"
+                 k-pinned="true"
+                 k-resizable="false"
+                 k-actions="['Minimize','Close']"
+                 class="message-window">
+                <div class="container">
+
+                    <div class="content">
+                        <div ng-repeat="message in conversation.messages"
+                             class="message">
+                            <img ng-src="{{message.image}}" ng-init="getUserIcon(message)" ng-show="message.image"/>
+                            <span class="glyphicon glyphicon-user" ng-if="!message.image"></span>
+                            <span ng-bind="message.body"></span>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="typing-area">
+                </div>
             </div>
         </div>
     </div>

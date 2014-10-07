@@ -106,7 +106,7 @@
                             // If no existing conversations or
                             // no conversation open with the target user...
                             if(!found){
-                                conversations.push(ConversationFactory(message));
+                                conversations.push(new ConversationFactory(message));
                                 $rootScope.$broadcast('messageAdded', {
                                     id: id
                                 });
@@ -148,7 +148,7 @@
                         [];
 
                     Object.defineProperty(this, 'target', {
-                        enumerable: false,
+                        enumerable: true,
                         configurable: false,
                         writable: false,
                         value: target
@@ -156,7 +156,7 @@
 
                     this.toString = function(){
                         return target + ' (' + this.messages.length + ')';
-                    }
+                    };
                 }
 
                 Conversation.prototype = {
