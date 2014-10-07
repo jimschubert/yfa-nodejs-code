@@ -121,6 +121,10 @@
                     }
                 };
 
+                $scope.sendMessage = function(text, target){
+                    Api.messages.send(target, text);
+                };
+
                 $scope.$on('messageAdded', setMessages);
                 $scope.$on('messageRemoved', setMessages);
             }

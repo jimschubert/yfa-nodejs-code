@@ -181,6 +181,14 @@ a.facebook {
     border-top:1px solid #e0e0e0;
     border-bottom-left-radius: 6px;
     border-bottom-right-radius: 6px;
+    max-height: 30px;
+    overflow-y:scroll;
+    margin:0 15px 0 1px;
+}
+
+.message-window .typing-area:focus {
+    outline-width: 0;
+    outline:none;
 }
 
 .message-window .message {

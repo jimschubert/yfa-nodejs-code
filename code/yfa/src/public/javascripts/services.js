@@ -76,6 +76,18 @@
                                 method: 'DELETE',
                                 cache: false
                             });
+                        },
+                        send: function(to, text, attachment){
+                            return $http({
+                                url: apiBase + '/messages',
+                                method: 'POST',
+                                params: { user_id: to },
+                                data: {
+                                    body: text,
+                                    attachment: attachment
+                                },
+                                cache: false
+                            });
                         }
                     }
                 };

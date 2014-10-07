@@ -51,8 +51,10 @@
 
                 </div>
 
-                <div class="typing-area">
-                </div>
+                <div class="typing-area"
+                     contenteditable
+                     ng-model="conversation.target"
+                     on-enter="sendMessage(text, data)"></div>
             </div>
         </div>
     </div>

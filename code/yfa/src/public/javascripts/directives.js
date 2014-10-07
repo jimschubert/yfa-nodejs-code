@@ -162,4 +162,35 @@
                 };
             }
         ]);
+
+    angular.module('myApp.directives')
+        .directive('contenteditable', [
+            function(){
+                return {
+                    require: '^?ngModel',
+                    restrict: 'A',
+                    scope: {
+                        onEnter: '&',
+                        model: '=?ngModel'
+                    },
+                    link: function (scope, element, attrs) {
+                        element.bind('keydown', function(e){
+                            if(e.keyCode === 13 && !e.shiftKey){
+                                e.preventDefault();
+                                var text = e.currentTarget.innerText;
+                                angular.element(element).html('');
+
+                                if(text){
+                                    scope.onEnter({
+                                        text: text,
+                                        data: scope.model
+                                    });
+                                    scope.$apply();
+                                }
+                            }
+                        });
+                    }
+                };
+            }
+        ]);
 })(angular);
