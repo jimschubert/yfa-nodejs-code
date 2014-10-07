@@ -17,6 +17,9 @@ var express = require('express'),
 
 var app = express();
 
+var server = http.Server(app);
+var io = require('socket.io')(server);
+
 // all environments
 app.set('port', process.env.PORT || 3000);
 
@@ -171,7 +174,15 @@ app.get('/auth/facebook/callback',
         failureRedirect: '/authentication'
     }),
     FacebookAuth.login);
+
 app.get('/auth/logout', FacebookAuth.logout);
+
+io.on('connection', function (socket) {
+    socket.emit('news', { hello: 'world' });
+    socket.on('my other event', function (data) {
+        console.log(data);
+    });
+});
 
 // If running from the command line, start the server
 if (module === require.main) {
@@ -183,7 +194,7 @@ if (module === require.main) {
         }
     });
 
-    http.createServer(app).listen(app.get('port'), function () {
+    server.listen(app.get('port'), function () {
         console.log('Express server listening on port ' + app.get('port'));
     });
 
