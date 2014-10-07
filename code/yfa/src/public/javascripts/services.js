@@ -213,4 +213,11 @@
                 };
             }
         ]);
+
+    angular.module('myApp.services')
+        .factory('socket', function (socketFactory) {
+            return socketFactory({
+                prefix: 'yfa|'
+            });
+        });
 })(angular);

@@ -90,8 +90,8 @@
             }
         ])
         .controller('MessageCtrl', [
-                    '$scope','MessageService','Api',
-            function($scope , MessageService , Api){
+                    '$scope','MessageService','Api','socket','$log',
+            function($scope , MessageService , Api , socket , $log){
                 function setMessages(){
                     $scope.conversations = MessageService.list();
                 }
@@ -127,6 +127,13 @@
 
                 $scope.$on('messageAdded', setMessages);
                 $scope.$on('messageRemoved', setMessages);
+
+                socket.emit('login');
+                socket.forward('time', $scope);
+
+                $scope.$on('yfa|time', function(ev, data){
+                    $log.info('logged in %s', data);
+                });
             }
         ]);
 })(angular);

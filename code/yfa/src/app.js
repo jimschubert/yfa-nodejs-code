@@ -19,6 +19,8 @@ var app = express();
 
 var server = http.Server(app);
 var io = require('socket.io')(server);
+var sessionStore = new (require('connect')).middleware.session.MemoryStore();
+var cookieParser = express.cookieParser('yfa-nodejs');
 
 // all environments
 app.set('port', process.env.PORT || 3000);
@@ -31,8 +33,8 @@ app.engine('html', require('ejs').renderFile);
 app.use(express.favicon());
 app.use(express.bodyParser({uploadDir: path.join(__dirname, 'tmp'), keepExtensions:true}));
 app.use(express.methodOverride());
-app.use(express.cookieParser());
-app.use(express.session({ secret: 'SECRET' }));
+app.use(cookieParser);
+app.use(express.session({ store: sessionStore }));
 FacebookAuth.call(null, passport);
 app.use(passport.initialize());
 app.use(passport.session());
@@ -177,10 +179,20 @@ app.get('/auth/facebook/callback',
 
 app.get('/auth/logout', FacebookAuth.logout);
 
-io.on('connection', function (socket) {
-    socket.emit('news', { hello: 'world' });
-    socket.on('my other event', function (data) {
-        console.log(data);
+var SessionSockets = require('session.socket.io')
+    , sessionSockets = new SessionSockets(io, sessionStore, cookieParser);
+
+sessionSockets.on('connection', function (err, socket, session) {
+    socket.on('login', function () {
+        if(session){
+            User.fb(session.passport.user, function(err, user){
+                console.log(arguments);
+                if(!err){
+                    socket.join(user._id);
+                    socket.emit('time', new Date());
+                }
+            });
+        }
     });
 });
 

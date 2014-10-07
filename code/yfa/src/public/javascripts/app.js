@@ -1,5 +1,16 @@
 // Declare app level module which depends on filters, and services
-angular.module('myApp', ['myApp.filters', 'myApp.services', 'myApp.directives', 'myApp.controllers', 'myApp.compiled','ui.bootstrap', 'ngRoute', 'draganddrop', 'kendo.directives']).
+angular.module('myApp', [
+    'myApp.filters',
+    'myApp.services',
+    'myApp.directives',
+    'myApp.controllers',
+    'myApp.compiled',
+    'ui.bootstrap',
+    'ngRoute',
+    'draganddrop',
+    'kendo.directives',
+    'btford.socket-io'
+]).
     config([
                  '$routeProvider','USER_CONTEXT',
         function ($routeProvider , USER_CONTEXT) {
