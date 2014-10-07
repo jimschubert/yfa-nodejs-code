@@ -93,8 +93,7 @@
                     '$scope','MessageService',
             function($scope , MessageService){
                 function setMessages(){
-                    $scope.messages = MessageService.list();
-                    console.log($scope.messages);
+                    $scope.conversations = MessageService.list();
                 }
 
                 $scope.$on('messageAdded', setMessages);

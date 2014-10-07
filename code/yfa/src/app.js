@@ -103,6 +103,10 @@ app.post(apiBase + '/messages', middleware.midFromQueryString('user_id'),
     middleware.requiresAuth,
     messages.send);
 
+app.get(apiBase + '/messages/:mid',
+    middleware.requiresAuth,
+    messages.getById);
+
 app.get(apiBase + '/messages/:mid/attachments',
     middleware.requiresAuth,
     messages.getAttachments);

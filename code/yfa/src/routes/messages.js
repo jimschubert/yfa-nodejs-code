@@ -66,3 +66,26 @@ exports.delete = function(req, res){
         return res.json(HttpStatus.OK, {});
     });
 };
+
+exports.getById = function(req, res){
+    var id = req.params.mid;
+    Message.findOne({ _id: id }, null, null, function(err, message){
+        if(err){
+            return res.problem(HttpStatus.INTERNAL_SERVER_ERROR,
+                "Unexpected problem",
+                "Could not get message due to internal error");
+        }
+
+        if(!message){
+            return res.json(HttpStatus.NO_CONTENT);
+        }
+
+        // Don't allow users to retrieve messages that don't belong to them!
+        if(message.to.toString() !== req.user._id.toString()
+            && message.from.toString() !== req.user._id.toString()) {
+            return res.json(HttpStatus.NO_CONTENT);
+        }
+
+        return res.json(HttpStatus.OK, message);
+    });
+};
