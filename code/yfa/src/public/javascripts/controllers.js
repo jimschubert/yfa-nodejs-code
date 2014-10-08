@@ -130,9 +130,14 @@
 
                 socket.emit('login');
                 socket.forward('time', $scope);
+                socket.forward('message', $scope);
 
                 $scope.$on('yfa|time', function(ev, data){
                     $log.info('logged in %s', data);
+                });
+
+                $scope.$on('yfa|message', function(ev, id){
+                    MessageService.addMessage(id);
                 });
             }
         ]);

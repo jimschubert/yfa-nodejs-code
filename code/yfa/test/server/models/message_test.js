@@ -49,13 +49,11 @@ describe("Message", function() {
                 from: users[1]._id,
                 body: 'hello'
             }, function(err, result){
-                // this may be weird, but the result should be the 'to' user.
                 assert.ifError(err);
                 result.should.not.be.null;
                 result.should.be.an.object;
-                (result._id.equals(users[0]._id)).should.be.true;
-                result.messages.should.be.an.array;
-                result.messages.length.should.be.exactly(1);
+                result._id.should.not.be.null;
+                result._id.should.not.be.undefined;
                 done();
             });
         });
@@ -68,23 +66,16 @@ describe("Message", function() {
                 body: 'hello',
                 attachment: att
             }, function(err, result){
-                // this may be weird, but the result should be the 'to' user.
                 assert.ifError(err);
                 result.should.not.be.null;
                 result.should.be.an.object;
-                (result._id.equals(users[0]._id)).should.be.true;
-                result.messages.should.be.an.array;
-                result.messages.length.should.be.exactly(1);
+                result._id.should.not.be.null;
+                result._id.should.not.be.undefined;
+                result.body.should.equal('hello');
+                result.attachment.should.be.an.object;
+                (result.attachment.dataURI === undefined).should.be.true;
 
-                Message.findOne({_id: result.messages[0] }, null, null, function(err, result){
-                    assert.ifError(err);
-                    result.should.not.be.null;
-                    result.should.be.an.object;
-                    result.body.should.equal('hello');
-                    result.attachment.should.be.an.object;
-                    (result.attachment.dataURI === undefined).should.be.true;
-                    done();
-                });
+                done();
             });
         });
     });
@@ -102,9 +93,8 @@ describe("Message", function() {
 
                 result.should.not.be.null;
                 result.should.be.an.object;
-                result.messages.should.be.an.array;
 
-                Message.getAttachments(result.messages[0], function(err, result){
+                Message.getAttachments(result._id, function(err, result){
                     assert.ifError(err);
                     result.should.be.an.object;
                     result.attachment.should.be.an.object;
@@ -126,7 +116,7 @@ describe("Message", function() {
     });
 
     describe('delete', function(){
-        var userWithMessage;
+        var message;
         beforeEach(function(done){
             var att = { dataURI: 'data:image/png;base64,R0lGODlhAQABAIAAAP///wAAACwAAAAAAQABAAACAkQBADs=' };
             Message.saveMessage({
@@ -136,19 +126,18 @@ describe("Message", function() {
                 attachment: att
             }, function(err, result){
                 assert.ifError(err);
-                userWithMessage = result;
+                message = result;
 
-                result.messages.should.be.an.array;
-                result.messages.length.should.equal(1);
+                result.should.not.be.null;
+                result.should.be.an.object;
 
                 done();
             });
         });
 
        it('should delete a message from a user object and from message collection', function(done){
-           Message.delete(userWithMessage.messages[0], function(err, result){
+           Message.delete(message._id, function(err, result){
                assert.ifError(err);
-               (result._id.equals(userWithMessage._id)).should.be.true;
                result.messages.should.be.an.array;
                result.messages.length.should.equal(0);
 
@@ -157,7 +146,7 @@ describe("Message", function() {
        });
 
         it('should return null for invalid message id', function(done){
-            var badId = userWithMessage.messages[0].toString().replace(/[aeiu852]/g, 'o');
+            var badId = message._id.toString().replace(/[aeiu852]/g, 'o');
             Message.delete(badId, function(err, result){
                 assert.ifError(err);
                 (result == null).should.be.true;

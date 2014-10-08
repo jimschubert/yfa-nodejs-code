@@ -18,7 +18,9 @@ function saveMessage(message, cb){
 
         User.findOneAndUpdate({ _id: message.to }, {
             $addToSet: { messages: message.toObject() }
-        }, cb);
+        }, function(err){
+            return cb(err, message);
+        });
     });
 }
 

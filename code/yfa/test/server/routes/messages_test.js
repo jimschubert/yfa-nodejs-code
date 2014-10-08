@@ -134,14 +134,14 @@ describe('messages route', function () {
             req.user._id = userCache[0]._id; // from
             req.query.user_id = userCache[1]._id; // to
             req.body = {
-                "message": "Hello, there!"
+                "body": "Hello, there!"
             };
 
             res.onResponse(function(){
                 assert.equal(res.statusCode, HttpStatus.OK);
                 assert.ok("object" === typeof res.actual);
 
-                assert.equal(res.actual.message, req.body.message);
+                assert.equal(res.actual.body, req.body.body);
                 assert.ok(res.actual.to.equals(userCache[1]._id));
                 assert.ok(res.actual.from.equals(userCache[0]._id));
 
@@ -224,9 +224,8 @@ describe('messages route', function () {
                         from: userCache[1]._id,
                         body: 'hello',
                         attachment: null
-                    }, function(err, user){
-                        // Remember, the result is the "to" user
-                        done(err, user.messages[0]);
+                    }, function(err, result){
+                        done(err, result._id);
                     })
                 },
 
@@ -300,7 +299,7 @@ describe('messages route', function () {
                         done();
                     });
 
-                    req.params.mid = saved.messages[0];
+                    req.params.mid = saved._id;
                     messages.getAttachments(req, res);
                 }
             ], function(err){

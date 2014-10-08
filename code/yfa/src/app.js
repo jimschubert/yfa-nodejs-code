@@ -15,6 +15,8 @@ var express = require('express'),
     User = require('./models/user'),
     middleware = require('./middleware');
 
+var broadcaster = require('./models/broadcast.js');
+
 var app = express();
 
 var server = http.Server(app);
@@ -179,14 +181,13 @@ app.get('/auth/facebook/callback',
 
 app.get('/auth/logout', FacebookAuth.logout);
 
-var SessionSockets = require('session.socket.io')
-    , sessionSockets = new SessionSockets(io, sessionStore, cookieParser);
+var SessionSockets = require('session.socket.io'),
+    sessionSockets = new SessionSockets(io, sessionStore, cookieParser);
 
 sessionSockets.on('connection', function (err, socket, session) {
     socket.on('login', function () {
         if(session){
             User.fb(session.passport.user, function(err, user){
-                console.log(arguments);
                 if(!err){
                     socket.join(user._id);
                     socket.emit('time', new Date());
@@ -194,6 +195,14 @@ sessionSockets.on('connection', function (err, socket, session) {
             });
         }
     });
+
+    if(!('message.add' in broadcaster._events))
+    {
+        broadcaster.on('message.add', function(message){
+            socket.in(message.to.toString()).emit('message', message._id);
+            socket.in(message.from.toString()).emit('message', message._id);
+        });
+    }
 });
 
 // If running from the command line, start the server

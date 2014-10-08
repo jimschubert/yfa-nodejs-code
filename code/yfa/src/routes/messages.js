@@ -2,6 +2,7 @@
 
 var HttpStatus = require('http-status');
 var Message = require('../models/message');
+var broadcaster = require('../models/broadcast.js');
 
 exports.send = function(req,res){
     var to = req.query["user_id"];
@@ -26,13 +27,14 @@ exports.send = function(req,res){
     message.to = to;
     message.from = from;
 
-    Message.saveMessage(message, function(err){
+    Message.saveMessage(message, function(err, message){
         if(err){
            return res.problem(HttpStatus.INTERNAL_SERVER_ERROR,
                "Unexpected problem",
                "Could not send message due to internal error");
         }
 
+        broadcaster.message(message);
         return res.json(HttpStatus.OK, message);
     });
 };

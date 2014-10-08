@@ -16,7 +16,7 @@
                             return $http({
                                 url: apiBase + '/users/' + id,
                                 method: 'GET',
-                                cache: false
+                                cache: true
                             });
                         },
                         list: function (options){
@@ -58,7 +58,7 @@
                             return $http({
                                 url: apiBase + '/images/' + id,
                                 method: 'GET',
-                                cache: false
+                                cache: true
                             });
                         }
                     },
