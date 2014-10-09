@@ -8,7 +8,6 @@ angular.module('myApp', [
     'ui.bootstrap',
     'ngRoute',
     'draganddrop',
-    'kendo.directives',
     'btford.socket-io'
 ]).
     config([

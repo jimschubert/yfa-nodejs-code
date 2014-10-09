@@ -1,0 +1,13 @@
+<div class="message-window" ng-class="{'shaded':shaded}">
+    <div class="title-bar">
+        <span ng-bind="title"></span>
+        <button class="pull-right" ng-click="close()">
+            <span class="glyphicon glyphicon-remove"></span>
+        </button>
+        <button class="pull-right" ng-click="toggleShade()">
+            <span class="glyphicon"
+                  ng-class="{'glyphicon-chevron-up':!shaded,'glyphicon-chevron-down':shaded}"></span>
+        </button>
+    </div>
+    <div class="contents" ng-transclude></div>
+</div>

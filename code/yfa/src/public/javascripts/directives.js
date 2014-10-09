@@ -1,4 +1,4 @@
-/*jshint unused:false */
+/*jshint unused:false, bitwise:false */
 (function(angular){
     'use strict';
     angular.module('myApp.directives', []).
@@ -193,4 +193,77 @@
                 };
             }
         ]);
+
+    (function(angular){
+
+        function onDrop(e) {
+            e.preventDefault();
+            var data = e.dataTransfer.getData("json/window-widget");
+            if (data && (data = JSON.parse(data)) && data.id) {
+                var elem = angular.element('[window-id="'+data.id+'"]').get(0);
+                elem.style.top = (e.clientY + data.top) + 'px';
+                elem.style.left = (e.clientX + data.left) + 'px';
+            }
+
+            return false;
+        }
+
+        function onDragOver(event) {
+            event.preventDefault();
+            return false;
+        }
+
+        document.body.addEventListener('drop',onDrop,false);
+        document.body.addEventListener('dragover',onDragOver,false);
+
+        angular.module('myApp.directives')
+            .directive('messageWindow', [
+                function(){
+                    return {
+                        restrict: 'A',
+                        transclude: true,
+                        replace: true,
+                        scope: {
+                            title: '=windowTitle',
+                            onClose: '&'
+                        },
+                        templateUrl: 'partials/window-widget.html',
+                        link: function(scope, element, attrs){
+                            var id = Math.random();
+                            angular.element(element).attr('draggable', true);
+                            angular.element(element).attr('window-id', id);
+
+                            function onDrag(e) {
+                                var style = window.getComputedStyle(event.target, null);
+                                var data = {
+                                    id: id,
+                                    top: (0|parseInt(style.getPropertyValue("top"),10)) - e.clientY,
+                                    left: (0|parseInt(style.getPropertyValue("left"),10)) - e.clientX
+                                };
+
+                                e.dataTransfer.effectAllowed = 'move';
+                                e.dataTransfer.setData("json/window-widget", JSON.stringify(data));
+                            }
+
+                            var elem = angular.element(element).get(0);
+                            elem.addEventListener('dragstart',onDrag,false);
+
+                            scope.shaded = false;
+                            scope.toggleShade = function(){
+                                scope.shaded = !scope.shaded;
+
+                                angular.element(element).css({
+                                    'height': scope.shaded ? '30px' : ''
+                                });
+                            };
+
+                            scope.close = function(){
+                                scope.onClose();
+                                angular.element(element).remove();
+                            };
+                        }
+                    };
+                }
+            ]);
+    })(angular);
 })(angular);
