@@ -149,7 +149,7 @@
 
         $scope.openConversation = function(userId, username, $event){
             // Ignore delete button.
-            if($event.target.nodeName === "BUTTON") return;
+            if($event.target.nodeName === "BUTTON") { return; }
             MessageService.openConversation(userId, username);
         };
     }

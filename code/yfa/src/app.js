@@ -60,12 +60,6 @@ if ('development' === app.get('env')) {
 app.use(app.router);
 app.use(express.static(path.join(__dirname, 'public')));
 
-var page = function (filename) {
-    return function (req, res) {
-        res.render(filename);
-    };
-};
-
 /* Users */
 var apiBase = '/api/v1';
 app.get(apiBase + '/users', middleware.requiresAuth, users.list);
