@@ -1,1 +1,20 @@
-<a href="/auth/facebook" target="_self">Login with Facebook</a>
+<% include top %>
+<style>
+    .navbar-form { display:none;}
+    .center-facebook { margin-left: auto; margin-right: auto; width: 210px; }
+    .row.intro { margin-left: auto; margin-right: auto; width: 340px; text-align: justify; }
+    .row.intro h2 { text-align: center; }
+</style>
+<div class="row intro">
+    <h2>yfaChat Login</h2>
+    <p>
+        New and existing members sign in the same way!
+    </p>
+    <em class="small">
+        yfaChat will automatically create an account for you once you've given the application permissions via Facebook.
+    </em>
+</div>
+<div class="row center-facebook">
+    <a href="/auth/facebook" class="facebook" target="_self"></a>
+</div>
+<% include bottom %>

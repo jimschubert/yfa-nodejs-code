@@ -1,38 +1,56 @@
-<h1>Your profile</h1>
-<form method="post"
+<% include top %>
+<form role="form" method="post"
       action="/user/profile"
-        accept-charset="UTF-8">
+      accept-charset="UTF-8"
+      style="width:400px; margin-left:auto; margin-right:auto;">
+    <h1>Your profile</h1>
+
     <% if(user.registrationDone === false) { %>
         <p>
             Values below have been populated based on your Facebook profile details.
         </p>
     <% } %>
-    <p>
-        <label>Username
-            <input type="text" name="username"
-                   value="<%= user.username %>" required />
-        </label>
+    <p class="form-group">
+        <label for="username">Username</label>
+
+        <input class="form-control"
+               type="text"
+               name="username"
+               value="<%= user.username %>"
+               required
+               placeholder="Enter Username"/>
     </p>
 
-    <p>
-        <label>First name
-            <input type="text" name="firstName"
-                   value="<%= user.firstName %>" required />
-        </label>
+    <p class="form-group">
+        <label for="firstName">First name</label>
+        <input class="form-control"
+               type="text"
+               name="firstName"
+               value="<%= user.firstName %>"
+               required
+               placeholder="Enter First name"/>
     </p>
 
-    <p>
-        <label>Last name
-            <input type="text" name="lastName"
-                   value="<%= user.lastName %>" required />
-        </label>
+    <p class="form-group">
+        <label for="lastName">Last name</label>
+
+        <input class="form-control"
+               type="text"
+               name="lastName"
+               value="<%= user.lastName %>"
+               required
+               placeholder="Enter Last name"/>
     </p>
 
-    <p>
-        <label>Email
-            <input type="email" name="email"
-                   value="<%= user.email %>" required />
-        </label>
+    <p class="form-group">
+        <label for="email">Email</label>
+        <input class="form-control"
+               type="email"
+               name="email"
+               value="<%= user.email %>"
+               required
+               placeholder="Enter email"/>
     </p>
-    <button type="submit">Save</button>
+    <button type="submit" class="btn btn-default">Save</button>
 </form>
+<% include bottom %>

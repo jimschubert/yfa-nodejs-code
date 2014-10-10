@@ -1,46 +1,81 @@
 <alert ng-repeat="alert in alerts" type="{{alert.type}}" close="closeAlert($index)">{{alert.msg}}</alert>
 <div class="jumbotron">
 	<h1>
-		Hello, world!
+		Your first app: node.js
 	</h1>
-    <p>This is a template for a simple marketing or informational website. It includes a large callout called the hero unit and three supporting pieces of content. Use it as a starting point to create something more unique.
+    <p>
+        A tutorial for real-world node.js application development using the 'mean' stack:
+        <ul style="list-style-type: none">
+            <li><span class="glyphicon glyphicon-ok" style="color:#2CEC00;"></span> MongoDB</li>
+            <li><span class="glyphicon glyphicon-ok" style="color:#2CEC00;"></span> Express.js</li>
+            <li><span class="glyphicon glyphicon-ok" style="color:#2CEC00;"></span> AngularJS</li>
+            <li><span class="glyphicon glyphicon-ok" style="color:#2CEC00;"></span> node.js</li>
+        </ul>
     </p>
 	<p>
-		<a href="#/about" class="btn btn-primary btn-lg" role="button">Learn more »</a>
+		<a href="https://leanpub.com/yfa-nodejs" class="btn btn-primary btn-lg" role="button" target="_blank">Learn more »</a>
 	</p>
 </div>
 <div class="row">
-	<div class="col-md-4">
+	<div class="col-md-6">
 		<h2>
-			Heading
+			node.js <a href="http://nodejs.org/" class="btn btn-info pull-right" role="button" target="_blank">nodejs.org »</a>
 		</h2>
         <p>
-            Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui.
+            <blockquote class="small">
+            <p>Node.js® is a platform built on Chrome's JavaScript runtime for easily building fast, scalable network applications.</p>
+            <p>Node.js uses an event-driven, non-blocking I/O model that makes it lightweight and efficient, perfect for data-intensive real-time applications that run across distributed devices.</p>
+            </blockquote>
         </p>
-		<p>
-			<a href="#" class="btn btn-default" role="button">View details »</a>
-		</p>
+        <p>
+            This application and the accompanying book introduce beginners to the world of API development using node.js.
+        </p>
 	</div>
-	<div class="col-md-4">
+	<div class="col-md-6">
 		<h2>
-			Heading
+			Express.js <a href="http://expressjs.com/" class="btn btn-info pull-right" role="button" target="_blank">expressjs.com »</a>
 		</h2>
         <p>
-            Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui.
+            <blockquote class="small">
+                <p>
+                Express is a minimal and flexible Node.js web application framework that provides a robust set of features for web and mobile applications.
+                </p>
+                <p>
+                With a myriad of HTTP utility methods and middleware at your disposal, creating a robust API is quick and easy.
+                </p>
+            </blockquote>
         </p>
-		<p>
-			<a href="#" class="btn btn-default" role="button">View details »</a>
-		</p>
+        <p>
+            Almost nothing is coded 'from scratch' these days. Express.js provides a quick and maintainable framework for creating APIs and traditional server-side rendered web applications.
+        </p>
 	</div>
-	<div class="col-md-4">
+</div>
+
+<div class="row">
+	<div class="col-md-6">
 		<h2>
-			Heading
+			MongoDB <a href="https://www.mongodb.org/" class="btn btn-info pull-right" role="button" target="_blank">mongodb.org »</a>
 		</h2>
         <p>
-            Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui.
+            <blockquote class="small">MongoDB (from "hu<strong>mongo</strong>us") is an open-source document database, and the leading NoSQL database. Written in C++.
+            </blockquote>
         </p>
-		<p>
-			<a href="#" class="btn btn-default" role="button">View details »</a>
-		</p>
+        <p>
+            MongoDB is used with mongoose.js to create a structured and schemaless application model in the database while enforcing common schema-like constraints in the application. This gives us an almost class-like structure within node.js, helping to eliminate some of the shock of moving from a classical language like Java or C# to a prototypical language like JavaScript.
+        </p>
 	</div>
+
+    <div class="col-md-6">
+        <h2>
+            AngularJS <a href="https://angularjs.org/" class="btn btn-info pull-right" role="button" target="_blank">angularjs.org »</a>
+        </h2>
+        <p>
+            <blockquote class="small">
+                HTML is great for declaring static documents, but it falters when we try to use it for declaring dynamic views in web-applications. AngularJS lets you extend HTML vocabulary for your application. The resulting environment is extraordinarily expressive, readable, and quick to develop.
+            </blockquote>
+        </p>
+        <p>
+            This application is written with AngularJS on the client-side to demonstrate reusable, declarative, and behavior-driven code. AngularJS answers a lot of problems with static HTML by providing a framework for extending HTML structure and behavior. AngularJS offers a convention to tame large-scale web applications in a way that many other frameworks can't achieve without a steady developer discipline.
+        </p>
+    </div>
 </div>
