@@ -5,7 +5,8 @@
        draggable="true"
        effect-allowed="copy"
        draggable-type="user-pager-object"
-       draggable-data="user">
+       draggable-data="user"
+       ng-click="openConversation(user._id, user.username)">
         <img ng-src="{{user.img}}" ng-init="loadImage(user)" ng-if="user.avatar" />
         <span class="glyphicon glyphicon-user" ng-if="!user.avatar"></span>
     </a>

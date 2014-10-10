@@ -135,7 +135,28 @@
                 };
 
                 service.list = function(){
-                    return angular.copy(conversations);
+                    // Don't add messages directly to this object. It can cause problems
+                    // like not triggering events as intended.
+                    return conversations;
+                };
+
+                service.openConversation = function(userId, username){
+                    var exists = false,
+                        len = conversations.length;
+
+                    for(var i=0; !exists && i < len; i++){
+                        if(conversations[i].target === userId){
+                            exists = true;
+                            conversations[i].username = username;
+                        }
+                    }
+
+                    if(!exists){
+                        var conversation = new ConversationFactory(null, userId);
+                        conversation.username = username;
+                        conversations.push(conversation);
+                        $rootScope.$broadcast('messageAdded', null);
+                    }
                 };
 
                 return service;
@@ -144,20 +165,22 @@
 
     angular.module('myApp.services')
         .factory('ConversationFactory', [
-                    'USER_CONTEXT',
-            function(USER_CONTEXT){
+                    'USER_CONTEXT','Api',
+            function(USER_CONTEXT , Api){
                 var maxConversationLength = 75;
-                function Conversation(message){
-                    var target;
-                    if(message.to === USER_CONTEXT.id){
-                        target = message.from;
-                    } else {
-                        target = message.to;
-                    }
+                function Conversation(message, userId){
+                    var target = userId;
+                    if(angular.isObject(message)) {
+                        if (message.to === USER_CONTEXT.id) {
+                            target = message.from;
+                        } else {
+                            target = message.to;
+                        }
 
-                    this.messages = angular.isDefined(message) ?
-                        [message] :
-                        [];
+                        this.messages = [message];
+                    } else {
+                        this.messages = [];
+                    }
 
                     Object.defineProperty(this, 'target', {
                         enumerable: true,
@@ -183,8 +206,12 @@
                     },
                     addMessage: function(message){
                         this.messages.push(message);
-                        if(this.messages.length > maxConversationLength){
-                            this.messages = this.messages.slice(0,maxConversationLength);
+                        var exceeds = this.messages.length - maxConversationLength;
+                        if(exceeds > 0){
+                            var removed = this.messages.splice(maxConversationLength, exceeds);
+                            angular.forEach(removed, function(message){
+                               Api.messages.deleteById(message._id);
+                            });
                         }
                         return true;
                     },
@@ -208,8 +235,8 @@
                     }
                 };
 
-                return function(message){
-                    return new Conversation(message);
+                return function(message, userId){
+                    return new Conversation(message, userId);
                 };
             }
         ]);

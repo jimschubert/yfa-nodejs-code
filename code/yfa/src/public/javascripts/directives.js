@@ -11,7 +11,7 @@
             }
         ]);
 
-    function UserPagerController($scope, Api){
+    function UserPagerController($scope, Api, MessageService){
         $scope.page = 0;
         $scope.hasNext = function(){
             return $scope.totalUsers && $scope.totalUsers > (($scope.page + 1)*$scope.pageSize);
@@ -49,6 +49,10 @@
             });
         }
 
+        $scope.openConversation = function(userId, username){
+            MessageService.openConversation(userId, username);
+        };
+
         $scope.$watch('pageSize', function(newer,older){
             if(!$scope.users || (angular.isDefined(newer) && (newer !== older))){
                 queryUsers();
@@ -57,7 +61,7 @@
 
         $scope.initialized = true;
     }
-    UserPagerController.$inject = ['$scope', 'Api'];
+    UserPagerController.$inject = ['$scope', 'Api', 'MessageService'];
 
     angular.module('myApp.directives')
         .directive('userPager',[
@@ -119,7 +123,7 @@
             }
         ]);
 
-    function CohortsItemController($scope, Api) {
+    function CohortsItemController($scope, Api, MessageService) {
         Api.users.getById($scope.cohortId)
             .success(function (data) {
                 $scope.cohort = data;
@@ -142,8 +146,12 @@
                     $scope.$destroy();
                 });
         };
+
+        $scope.openConversation = function(userId, username){
+            MessageService.openConversation(userId, username);
+        };
     }
-    CohortsItemController.$inject = ['$scope', 'Api'];
+    CohortsItemController.$inject = ['$scope', 'Api', 'MessageService'];
 
     angular.module('myApp.directives')
         .directive('cohortItem',[

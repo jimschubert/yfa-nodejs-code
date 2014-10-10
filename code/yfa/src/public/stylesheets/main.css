@@ -155,7 +155,7 @@ div[message-window] {
     padding: 0 0 8px 0;
     z-index: 999999;
     background: #ffffff;
-    position:relative;
+    position:absolute;
     overflow:hidden;
 
     transition-property: height;

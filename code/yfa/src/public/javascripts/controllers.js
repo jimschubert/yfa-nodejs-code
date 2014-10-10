@@ -97,7 +97,7 @@
                 }
 
                 var imageCache = {};
-                $scope.getUserIcon = function(message){
+                $scope.getUserMessageInfo = function(message, conversation){
                     if(!angular.isDefined(message.image)) {
                         var sender = $scope.user.messages.indexOf(message._id) !== -1,
                             senderId = sender ? message.from : message.to;
@@ -109,6 +109,7 @@
                             // query server.
                             Api.users.getById(senderId)
                                 .success(function(user){
+                                    conversation.username = user.username;
                                     if(!user.avatar){ return; }
 
                                     Api.images.getById(user.avatar)
@@ -123,6 +124,14 @@
 
                 $scope.sendMessage = function(text, target){
                     Api.messages.send(target, text);
+                };
+
+                $scope.closeConversation = function(conversation){
+                    if(conversation && angular.isArray(conversation.messages)) {
+                        angular.forEach(conversation.messages, function(message){
+                            Api.messages.deleteById(message._id);
+                        });
+                    }
                 };
 
                 $scope.$on('messageAdded', setMessages);
