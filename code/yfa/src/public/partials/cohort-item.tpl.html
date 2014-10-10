@@ -1,4 +1,4 @@
-<div class="row" ng-click="openConversation(cohort._id, cohort.username)">
+<div class="row" ng-click="openConversation(cohort._id, cohort.username, $event)">
     <div>
         <img ng-src="{{cohort.img}}" ng-if="cohort.img" />
         <span class="glyphicon glyphicon-user ng-scope" ng-if="!cohort.img"></span>
