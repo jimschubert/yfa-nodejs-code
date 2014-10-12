@@ -51,7 +51,7 @@ module.exports = exports = function (passport) {
     passport.use(new FacebookStrategy({
             clientID: facebook.app.id,
             clientSecret: facebook.app.secret,
-            callbackURL: "/auth/facebook/callback"
+            callbackURL: (facebook.app.host||"") + "/auth/facebook/callback"
         }, authVerification)
     );
 
