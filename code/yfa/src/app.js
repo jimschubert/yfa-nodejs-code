@@ -190,6 +190,10 @@ sessionSockets.on('connection', function (err, socket, session) {
         }
     });
 
+    socket.on('typing', function(cohort, sender){
+        socket.in(cohort).emit('typing', sender);
+    });
+
     if(!('message.add' in broadcaster._events))
     {
         broadcaster.on('message.add', function(message){

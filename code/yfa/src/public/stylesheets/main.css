@@ -237,6 +237,18 @@ div[message-window] {
     height: 20px;
     width: 20px;
 }
+.typing-notification {
+    position: relative;
+    bottom: 28px;
+    left: 325px;
+    font-size: small;
+    color: rgba(0,0,0,0.6);
+    display:none;
+}
+
+.typing-notification.typing {
+    display:initial;
+}
 
 @media (min-width: 10px) and (max-width: 979px) {
  body {

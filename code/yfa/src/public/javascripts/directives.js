@@ -237,6 +237,7 @@
                             title: '=windowTitle',
                             onClose: '&'
                         },
+                        controller: function (){},
                         templateUrl: 'partials/window-widget.html',
                         link: function(scope, element, attrs){
                             var id = Math.random();
@@ -273,6 +274,45 @@
                             };
                         }
                     };
+                }
+            ]);
+
+        angular.module('myApp.directives')
+            .directive('typingNotification', [
+                        'socket',
+                function(socket){
+                    return {
+                        restrict: 'E',
+                        require: '^messageWindow',
+                        replace: true,
+                        template: '<span class="typing-notification" ng-class="{typing: isTyping}">\u2328</span>',
+                        scope: {
+                            target: '=cohort',
+                            sender: '=user'
+                        },
+                        link: function(scope,element,attr){
+                            var lastMessage = 0;
+                            element.parent().find('.typing-area').bind('keyup', function(e) {
+                                // Notify every two seconds.
+                                if(+new Date() - lastMessage > 2000) {
+                                    socket.emit('typing', scope.target, scope.sender);
+                                    lastMessage = +new Date();
+                                }
+                            });
+
+                            socket.forward('typing', scope);
+
+                            scope.$on('yfa|typing', function(ev, cohort){
+                                if(cohort === scope.target && !scope.isTyping){
+                                    scope.isTyping = true;
+                                    setTimeout(function(){
+                                        scope.isTyping = false;
+                                        scope.$apply();
+                                    }, 1000);
+                                }
+                            });
+                        }
+                    }
                 }
             ]);
     })(angular);
