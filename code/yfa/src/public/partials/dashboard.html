@@ -33,7 +33,8 @@
                  window-title="conversation.username"
                  ng-repeat="conversation in conversations track by conversation.target"
                  on-close="closeConversation(conversation)">
-                <div class="container">
+                <div class="container"
+                     img-drop-upload>
 
                     <div class="message-content">
                         <div ng-repeat="message in conversation.messages"

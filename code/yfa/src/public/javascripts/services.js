@@ -60,6 +60,16 @@
                                 method: 'GET',
                                 cache: true
                             });
+                        },
+                        upload: function(img){
+                            // see: http://uncorkedstudios.com/blog/multipartformdata-file-upload-with-angularjs
+                            return $http({
+                                url: apiBase + '/images/',
+                                method: 'POST',
+                                data: img,
+                                transformRequest: angular.identity,
+                                headers: {'Content-Type': undefined}
+                            });
                         }
                     },
                     messages: {

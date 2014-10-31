@@ -250,6 +250,10 @@ div[message-window] {
     display:initial;
 }
 
+.container.droppable {
+    background: rgba(141, 240, 89, 0.40);
+}
+
 @media (min-width: 10px) and (max-width: 979px) {
  body {
      padding-top:60px;

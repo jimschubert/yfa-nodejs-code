@@ -41,6 +41,9 @@ FacebookAuth.call(null, passport);
 app.use(passport.initialize());
 app.use(passport.session());
 
+// Set max file size limit
+app.use(express.limit('2mb'));
+
 /* custom middlware needs to come before router */
 app.use(middleware.requestUri);
 app.use(middleware.responseProblem);

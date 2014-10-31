@@ -316,4 +316,190 @@
                 }
             ]);
     })(angular);
+
+    (function(angular){
+
+        // http://stackoverflow.com/a/14930686/151445
+        function dataURItoBlob(dataURI) {
+            var byteString,
+                mimeType;
+
+            if(dataURI.split(',')[0].indexOf('base64') !== -1 ) {
+                byteString = atob(dataURI.split(',')[1]);
+            } else {
+                byteString = decodeURI(dataURI.split(',')[1]);
+            }
+
+            mimeType = dataURI.split(',')[0].split(':')[1].split(';')[0];
+
+            var content = [];
+            for (var i = 0; i < byteString.length; i++) {
+                content[i] = byteString.charCodeAt(i);
+            }
+
+            return new Blob([new Uint8Array(content)], {type: mimeType});
+        }
+
+        // see: http://html5demos.com/dnd-upload
+        var tests = [
+            function fileReaderSupportTest(){
+                return !angular.isUndefined(typeof FileReader);
+            },
+            function formDataSupportTest(){
+                return "function" === typeof FormData;
+            },
+            function canvasSupportTest(){
+                return !!document.createElement('canvas').getContext;
+            },
+            function blobSupportTest(){
+                return "function" === typeof Blob;
+            },
+            function uint8ArraySupportTest(){
+                return "function" === typeof Uint8Array;
+            }
+        ];
+
+        var passes = 0;
+        angular.forEach(tests, function(test){
+            // Add all passing tests
+            var success = test();
+            passes += (+success);
+
+            if(!test.name){
+                var fun = test.toString();
+                fun = fun.substr(9);
+                fun = fun.substr(0, fun.indexOf('('));
+                test.name = fun;
+            }
+
+            if(console && "function" === typeof console.info){
+                console.info('%cTest: %s => %s', 'color:blue', test.name, success);
+            }
+        });
+
+        angular.module('myApp.directives')
+            .directive('imgDropUpload', [
+                '$log','Api',
+                function($log , Api){
+
+                    var types = [
+                        "image/png",
+                        "image/jpeg",
+                        "image/gif"
+                    ];
+
+                    function resizeAndUpload(file, maxHeight, maxWidth, cb) {
+                        cb = "function" === typeof cb ? cb : function(){
+                            $log.warn('No callback to handle image upload!');
+                        };
+
+                        var reader = new FileReader();
+                        reader.onload = function (event) {
+                            // Get Image
+                            var img = new Image();
+
+                            img.onload = function () {
+                                var canvas = document.createElement('canvas');
+                                var ctx = canvas.getContext('2d');
+
+                                // Resize Image to bound size
+                                if (img.height > maxHeight) {
+                                    img.width *= maxHeight / img.height;
+                                    img.height = maxHeight;
+                                }
+
+                                if (img.width > maxWidth) {
+                                    img.height *= maxWidth / img.width;
+                                    img.width = maxWidth;
+                                }
+
+                                // Resize canvas to bound size
+                                canvas.width = img.width;
+                                canvas.height = img.height;
+
+                                $log.info('Uploading image with dimensions: %dh x %dw', img.height, img.width);
+
+                                // Write our resized image to canvas
+                                ctx.drawImage(img, 0, 0, img.width, img.height);
+
+                                // Upload Image
+                                var dataUri = canvas.toDataURL("image/png");
+
+                                $log.info('Image reduced by %d%', (event.target.result.length/dataUri.length));
+
+                                var formData = new FormData();
+                                formData.append('image', dataURItoBlob(dataUri));
+                                Api.images.upload(formData)
+                                    .success(function (data) {
+                                        // Return Image Id
+                                        var id = data && data._id;
+                                        cb({ image: data });
+                                    })
+                                    .error(function(data){
+                                        $log.error(data);
+                                    });
+                            };
+
+                            // Original dataURI is event.target.result
+                            img.src = event.target.result;
+                        };
+
+                        reader.readAsDataURL(file);
+                    }
+
+                    if(passes === tests.length) {
+                        return {
+                            scope: { onImageUploaded: '&' },
+                            link: function lnkImgDropUpload(scope, element, attr) {
+                                var maxHeight = parseInt(attr['maxHeight'], 10) || 200;
+                                var maxWidth = parseInt(attr['maxWidth'], 10) || 300;
+
+                                element.get(0).addEventListener('drop', function (e) {
+                                    e.preventDefault();
+                                    element.removeClass('droppable');
+
+                                    var files = e.dataTransfer.files||e.target.files||[];
+                                    var file = files[0];
+
+                                    // Only accept certain types of files.
+                                    if(file && ~types.indexOf(file.type)){
+                                        if(file.size < 20000000)
+                                        {
+                                            resizeAndUpload(file,
+                                                maxHeight,
+                                                maxWidth,
+                                                scope.onImageUploaded
+                                            );
+                                        } else {
+                                            $log.error('File too large');
+                                        }
+                                    }
+
+                                    return false;
+                                }, false);
+
+                                element.get(0).addEventListener('dragover', function (e) {
+                                    e.preventDefault();
+
+                                    if(!element.hasClass('droppable') && ~e.dataTransfer.types.indexOf("Files")){
+                                        element.addClass('droppable');
+                                    }
+
+                                    return false;
+                                }, false);
+
+                                element.get(0).addEventListener('dragleave', function (e) {
+                                    e.preventDefault();
+                                    element.removeClass('droppable');
+                                    return false;
+                                }, false);
+                            }
+                        };
+                    } else {
+                        $log.warn("This browser doesn't support required features for the imgDropUpload directive.");
+                        return { };
+                    }
+                }
+            ]);
+    })(angular);
 })(angular);
