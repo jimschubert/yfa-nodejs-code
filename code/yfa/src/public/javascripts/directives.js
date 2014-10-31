@@ -502,4 +502,30 @@
                 }
             ]);
     })(angular);
+
+    angular.module('myApp.directives')
+        .directive('imageAttachment', [
+                    'Api',
+            function(Api){
+                return {
+                    restrict: 'E',
+                    replace: 'true',
+                    scope: {
+                        id: '=attachmentId'
+                    },
+                    template: '<img ng-src="{{dataURI}}" class="image-attachment image-thumbnail"/>',
+                    link: function(scope, element, attrs){
+                        var un = scope.$watch('id', function(newer){
+                            if(newer){
+                                Api.images.getById(newer)
+                                    .success(function(data){
+                                        scope.dataURI = data && data.dataURI;
+                                    });
+                            }
+                            un();
+                        });
+                    }
+                };
+            }
+        ]);
 })(angular);

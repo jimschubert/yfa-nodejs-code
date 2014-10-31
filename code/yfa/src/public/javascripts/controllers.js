@@ -92,6 +92,7 @@
         .controller('MessageCtrl', [
                     '$scope','MessageService','Api','socket','$log',
             function($scope , MessageService , Api , socket , $log){
+
                 function setMessages(){
                     $scope.conversations = MessageService.list();
                 }
@@ -123,7 +124,11 @@
                 };
 
                 $scope.sendMessage = function(text, target){
-                    Api.messages.send(target, text);
+                    Api.messages.send(target, text,
+                        $scope.currentMessageImage && $scope.currentMessageImage._id)
+                        .success(function(d){
+                            $scope.currentMessageImage = null;
+                        });
                 };
 
                 $scope.closeConversation = function(conversation){
@@ -132,6 +137,10 @@
                             Api.messages.deleteById(message._id);
                         });
                     }
+                };
+
+                $scope.stashImage = function(image){
+                    $scope.currentMessageImage = image;
                 };
 
                 $scope.$on('messageAdded', setMessages);

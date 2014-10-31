@@ -34,7 +34,8 @@
                  ng-repeat="conversation in conversations track by conversation.target"
                  on-close="closeConversation(conversation)">
                 <div class="container"
-                     img-drop-upload>
+                     img-drop-upload
+                     on-image-uploaded="stashImage(image)">
 
                     <div class="message-content">
                         <div ng-repeat="message in conversation.messages"
@@ -43,9 +44,16 @@
                             <img ng-src="{{message.image}}" ng-if="message.image"/>
                             <span class="glyphicon glyphicon-user" ng-if="!message.image"></span>
                             <span ng-bind="message.body"></span>
+                            <image-attachment
+                                    ng-if="message.attachment"
+                                    attachment-id="message.attachment">
+                            </image-attachment>
                         </div>
                     </div>
 
+                    <div class="image-preview" ng-if="currentMessageImage">
+                        <img ng-src="{{currentMessageImage.dataURI}}" class="img-thumbnail" />
+                    </div>
                 </div>
                 <typing-notification cohort="conversation.target" user="user._id"></typing-notification>
                 <div class="typing-area"

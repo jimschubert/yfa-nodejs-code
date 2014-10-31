@@ -233,10 +233,16 @@ div[message-window] {
     margin-bottom:10px;
 }
 
-.message-window .message img {
+.message-window .message img:not(.image-attachment) {
     height: 20px;
     width: 20px;
 }
+
+.message-window .message img.image-attachment {
+    display: block;
+    margin: 0 auto;
+}
+
 .typing-notification {
     position: relative;
     bottom: 28px;
@@ -252,6 +258,17 @@ div[message-window] {
 
 .container.droppable {
     background: rgba(141, 240, 89, 0.40);
+}
+
+.image-preview {
+    position: absolute;
+    bottom:0;
+    right:0;
+}
+
+.image-preview img {
+    max-height:100px;
+    max-width:100px;
 }
 
 @media (min-width: 10px) and (max-width: 979px) {
