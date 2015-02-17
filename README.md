@@ -1,6 +1,8 @@
 yfa-nodejs-code
 ===============
 
+[![Join the chat at https://gitter.im/jimschubert/yfa-nodejs-code](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/jimschubert/yfa-nodejs-code?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 This repository is supplemental code to Jim Schubert's book [Your First App: node.js](https://leanpub.com/yfa-nodejs).
 
 The book is a full-stack application development tutorial using what is commonly known as the 'MEAN' stack, but with a heavier focus on the backend technologies: node.js, express.js, and MongoDB. The book ends with a starter AngularJS project of an HTML5 instant messaging chat application.
