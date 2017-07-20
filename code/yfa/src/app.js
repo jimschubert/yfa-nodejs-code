@@ -40,6 +40,7 @@ var page = function (filename) {
 };
 
 app.get('/login', page('login.html'));
+app.get('/logout', page('logout.html'));
 
 // app.get('/', routes.index);
 app.get('/compiled/*?', routes.partial);
