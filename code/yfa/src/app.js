@@ -39,6 +39,7 @@ var page = function (filename) {
     };
 };
 
+app.get('/authentication', page('authentication.html'));
 app.get('/login', page('login.html'));
 app.get('/logout', page('logout.html'));
 
