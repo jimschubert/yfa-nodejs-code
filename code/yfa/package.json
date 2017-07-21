@@ -30,7 +30,6 @@
     "test": "grunt test"
   },
   "devDependencies": {
-    "async": "^0.2.9",
     "grunt": "~0.4.1",
     "grunt-contrib-jshint": "~0.1.1",
     "grunt-contrib-nodeunit": "~0.1.2",
@@ -49,10 +48,10 @@
     "karma-ng-scenario": "~0.1.0",
     "karma-phantomjs-launcher": "~0.1.0",
     "karma-script-launcher": "~0.1.0",
-    "mocha": "~1.12.1",
-    "mongoose": "^1.4.0"
+    "mocha": "~1.12.1"
   },
   "dependencies": {
+    "async": "^0.2.9",
     "express": "3.2.6",
     "jade": "*",
     "jasmine-node": "~1.10.1",
