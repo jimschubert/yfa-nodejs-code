@@ -7,7 +7,9 @@ var express = require('express'),
     routes = require('./routes'),
     resource = require('./routes/resource'),
     http = require('http'),
-    path = require('path');
+    path = require('path'),
+    passport = require('passport'),
+    FacebookAuth = require('./FacebookAuth.js');
 
 var app = express();
 
@@ -19,6 +21,15 @@ app.engine('html', require('ejs').renderFile);
 app.use(express.favicon());
 app.use(express.bodyParser());
 app.use(express.methodOverride());
+
+// passport init
+app.use(express.cookieParser());
+app.use(express.session({ secret: 'SECRET' }));
+FacebookAuth.call(null, passport);
+app.use(passport.initialize());
+app.use(passport.session());
+// end pasport init
+
 app.use(app.router);
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -39,11 +50,24 @@ var page = function (filename) {
     };
 };
 
+app.get('/auth/facebook',
+    passport.authenticate('facebook'),
+    function(){ /* redirected before this executes */ }
+);
+
+app.get('/auth/facebook/callback',
+    passport.authenticate('facebook', {
+        failureRedirect: '/authentication'
+    }),
+    FacebookAuth.login);
+
+app.get('/auth/logout', FacebookAuth.logout);
+
 app.get('/authentication', page('authentication.html'));
 app.get('/login', page('login.html'));
 app.get('/logout', page('logout.html'));
 
-app.get('/user/profile', page('profile.html'));
+app.get('/user/profile', FacebookAuth.verifyAuth, page('profile.html'));
 
 // app.get('/', routes.index);
 app.get('/compiled/*?', routes.partial);
