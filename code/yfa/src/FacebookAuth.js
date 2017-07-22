@@ -6,6 +6,7 @@ var facebook = require(path.join(
     'yfa-nodejs',
     'facebook.json'));
 var FacebookStrategy = require('passport-facebook').Strategy;
+var User = require('./models/user');
 
 module.exports = exports = function (passport) {
     // Configure the FacebookStrategy
@@ -15,8 +16,21 @@ module.exports = exports = function (passport) {
             callbackURL: (facebook.app.host||"") + "/auth/facebook/callback"
         },
         function (accessToken, refreshToken, profile, done) {
-            return done(null, {
-                facebook: profile
+            User.fb(profile.id, function (err, existingUser) {
+                if (existingUser) {
+                    done(null, existingUser);
+                } else {
+                    var newUser = new User({
+                        facebookId: profile.id,
+                        registrationDone: false,
+                        username: profile.username,
+                        first_name: profile.name.givenName,
+                        last_name: profile.name.familyName,
+                        email: profile.emails[0].value
+                    });
+
+                    newUser.save(done);
+                }
             });
         }
     ));
@@ -32,9 +46,11 @@ module.exports = exports = function (passport) {
 };
 
 module.exports.login = exports.login = function (req, res) {
-    // query user, if exists...
-    res.redirect('/');
-    // else...  res.redirect('/user/profile');
+    if (req.user.registrationDone) {
+        res.redirect('/');
+    } else {
+        res.redirect('/user/profile');
+    }
 };
 
 module.exports.logout = exports.logout = function (req, res) {
@@ -45,7 +61,12 @@ module.exports.logout = exports.logout = function (req, res) {
 };
 
 module.exports.verifyAuth = exports.verifyAuth = function (req, res, next) {
-    return req.isAuthenticated() ?
+    var authenticated = req.isAuthenticated();
+    if (authenticated && !req.user.registrationDone && req.path !== "/user/profile") {
+        return res.redirect('/user/profile');
+    }
+
+    return authenticated ?
         next() :
         res.redirect('/login');
 };

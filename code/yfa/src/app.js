@@ -51,7 +51,10 @@ var page = function (filename) {
 };
 
 app.get('/auth/facebook',
-    passport.authenticate('facebook'),
+    passport.authenticate('facebook', {
+            scope: 'email'
+        }
+    ),
     function(){ /* redirected before this executes */ }
 );
 
@@ -75,6 +78,13 @@ app.get('/resources', resource.list);
 
 // If running from the command line, start the server
 if (module === require.main) {
+    var connection = require('./db');
+    connection().on('connected', function(err){
+        if(err){
+            process.stderr.write(err);
+            process.exit(1);
+        }
+    });
     http.createServer(app).listen(app.get('port'), function () {
         console.log('Express server listening on port ' + app.get('port'));
     });
