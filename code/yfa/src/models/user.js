@@ -3,6 +3,8 @@ var mongoose = require('mongoose');
 
 var enumValues = ['online', 'away', 'offline', null, undefined];
 var userSchema = new mongoose.Schema({
+    facebookId: String,
+    registrationDone: Boolean,
     username: String,
     first_name: String,
     last_name: String,
@@ -12,6 +14,10 @@ var userSchema = new mongoose.Schema({
     // TODO: messages
     // TODO: images
 }, { collection: 'yfa' });
+
+userSchema.static('fb',  function (id, cb) {
+    return this.findOne({ facebookId: id }, cb);
+});
 
 var User = mongoose.model('User', userSchema);
 
