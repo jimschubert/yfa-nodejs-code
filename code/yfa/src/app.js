@@ -9,7 +9,8 @@ var express = require('express'),
     http = require('http'),
     path = require('path'),
     passport = require('passport'),
-    FacebookAuth = require('./FacebookAuth.js');
+    FacebookAuth = require('./FacebookAuth.js'),
+    User = require('./models/user');
 
 var app = express();
 
@@ -74,6 +75,37 @@ app.get('/user/profile',
     FacebookAuth.verifyAuth,
     function (req, res) {
         res.render('profile', { user: req.user });
+    });
+
+app.post('/user/profile',
+    FacebookAuth.verifyAuth,
+    function (req, res, next) {
+        var upd = req.body;
+        User.fb(req.user.facebookId, function(err, user){
+            if (err) { return next(err); }
+            if (user === null) {
+                // TODO: redirect to an "oops" page. 
+                // This would indicate bad data in the database.
+                return res.redirect('/user/profile');
+            }
+
+            // only new users can change their usernames
+            if (!user.registrationDone) {
+                // TODO: Verify username matches rules, then...
+                user.username = upd.username;
+            }
+
+            user.registrationDone = true;
+            user.first_name = upd.first_name || user.first_name;
+            user.last_name = upd.last_name || user.last_name;
+            user.email = upd.email || user.email;
+            user.state = User.States.ONLINE;
+
+            user.save(function(err, user /*, numAffected */) {
+                // TODO: Handle database errors
+                res.render('profile', { user: user });
+            });
+        });
     });
 
 // app.get('/', routes.index);

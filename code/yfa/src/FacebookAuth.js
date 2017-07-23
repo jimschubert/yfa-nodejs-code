@@ -37,11 +37,11 @@ module.exports = exports = function (passport) {
 
     // prepare for user serialize/deserialize
     passport.serializeUser(function (user, done) {
-        done(null, user);
+        done(null, user.facebookId);
     });
 
-    passport.deserializeUser(function (obj, done) {
-        done(null, obj);
+    passport.deserializeUser(function (id, done) {
+        User.fb(id, done);
     });
 };
 
