@@ -70,7 +70,11 @@ app.get('/authentication', page('authentication.html'));
 app.get('/login', page('login.html'));
 app.get('/logout', page('logout.html'));
 
-app.get('/user/profile', FacebookAuth.verifyAuth, page('profile.html'));
+app.get('/user/profile',
+    FacebookAuth.verifyAuth,
+    function (req, res) {
+        res.render('profile', { user: req.user });
+    });
 
 // app.get('/', routes.index);
 app.get('/compiled/*?', routes.partial);
