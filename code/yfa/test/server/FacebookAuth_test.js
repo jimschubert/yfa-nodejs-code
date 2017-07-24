@@ -91,4 +91,92 @@ describe('FacebookAuth', function () {
             assert.equal(res.redirectedTo, "/user/profile");
         });
     });
+
+    describe('#logout', function () {
+        it("should redirect to /login after logging out", function () {
+            // arrange
+            var req = {
+                logout: function () {
+                    req.logoutCalled = true;
+                }
+            };
+
+            var res = {
+                redirect: function (location) {
+                    res.redirectedTo = location;
+                }
+            };
+
+            // act
+            FacebookAuth.logout(req, res);
+
+            // assert
+            assert.ok(req.logoutCalled);
+            assert.equal(res.redirectedTo, "/login");
+        });
+    });
+
+    describe("#verifyAuth", function () {
+        var req, res;
+
+        beforeEach(function () {
+            req = {
+                authenticated: true,
+                isAuthenticated: function () { return req.authenticated; },
+                user: {
+                    registrationDone: true
+                },
+                path: "/user/profile"
+            };
+
+            res = {
+                redirect: function (location) {
+                    res.redirectedTo = location;
+                }
+            };
+        });
+
+        it('should redirect to /user/profile when authenticated user is not done with registration', function () {
+            // arrange
+            req.authenticated = true;
+            req.user.registrationDone = false;
+            req.path = "/somepath";
+
+            // act
+            FacebookAuth.verifyAuth(req, res, function () {
+                assert.fail("This middleware should not continue with the given conditions.");
+            });
+
+            // assert
+            assert.equal(res.redirectedTo, "/user/profile");
+        });
+
+        it('should redirect to /user/login for unauthenticated users', function () {
+            // arrange
+            req.authenticated = false;
+
+            // act
+            FacebookAuth.verifyAuth(req, res, function () {
+                assert.fail("This middleware should not continue with the given conditions.");
+            });
+
+            // assert
+            assert.equal(res.redirectedTo, "/login");
+        });
+
+        it('should pass to next function registered, authenticated users', function () {
+            // arrange
+            req.authenticated = true;
+            req.registrationDone = true;
+            req.path = "/some/resource";
+
+            // act
+            FacebookAuth.verifyAuth(req, res, function () {
+                assert.ok("We expect to continue on with middleware or route processing");
+            });
+
+            // assert
+            assert.ok(res.redirectedTo === undefined);
+        });
+    });
 });
