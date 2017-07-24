@@ -8,6 +8,33 @@ var facebook = require(path.join(
 var FacebookStrategy = require('passport-facebook').Strategy;
 var User = require('./models/user');
 
+var authVerification = function (accessToken, refreshToken, profile, done) {
+    User.fb(profile.id, function (err, existingUser) {
+        if (existingUser) {
+            done(null, existingUser);
+        } else {
+            var newUser = new User({
+                facebookId: profile.id,
+                registrationDone: false,
+                username: profile.username,
+                first_name: profile.name.givenName,
+                last_name: profile.name.familyName,
+                email: profile.emails[0].value
+            });
+
+            newUser.save(done);
+        }
+    });
+};
+
+var authSerialize = function (user, done) {
+    done(null, user.facebookId);
+};
+
+var authDeserialize = function (id, done) {
+    User.fb(id, done);
+};
+
 module.exports = exports = function (passport) {
     // Configure the FacebookStrategy
     passport.use(new FacebookStrategy({
@@ -15,34 +42,12 @@ module.exports = exports = function (passport) {
             clientSecret: facebook.app.secret,
             callbackURL: (facebook.app.host||"") + "/auth/facebook/callback"
         },
-        function (accessToken, refreshToken, profile, done) {
-            User.fb(profile.id, function (err, existingUser) {
-                if (existingUser) {
-                    done(null, existingUser);
-                } else {
-                    var newUser = new User({
-                        facebookId: profile.id,
-                        registrationDone: false,
-                        username: profile.username,
-                        first_name: profile.name.givenName,
-                        last_name: profile.name.familyName,
-                        email: profile.emails[0].value
-                    });
-
-                    newUser.save(done);
-                }
-            });
-        }
+        authVerification
     ));
 
     // prepare for user serialize/deserialize
-    passport.serializeUser(function (user, done) {
-        done(null, user.facebookId);
-    });
-
-    passport.deserializeUser(function (id, done) {
-        User.fb(id, done);
-    });
+    passport.serializeUser(authSerialize);
+    passport.deserializeUser(authDeserialize);
 };
 
 module.exports.login = exports.login = function (req, res) {
@@ -70,3 +75,9 @@ module.exports.verifyAuth = exports.verifyAuth = function (req, res, next) {
         next() :
         res.redirect('/login');
 };
+
+if(process.argv[1].match(/_mocha$/)) {
+      module.exports.authVerification = exports.authVerification = authVerification;
+      module.exports.authSerialize = exports.authSerialize = authSerialize;
+      module.exports.authDeserialize = exports.authDeserialize = authDeserialize;
+}
