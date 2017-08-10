@@ -5,6 +5,7 @@
  */
 var express = require('express'),
     routes = require('./routes'),
+    users = require('./routes/users'),
     resource = require('./routes/resource'),
     http = require('http'),
     path = require('path'),
@@ -70,6 +71,8 @@ app.get('/auth/logout', FacebookAuth.logout);
 app.get('/authentication', page('authentication.html'));
 app.get('/login', page('login.html'));
 app.get('/logout', page('logout.html'));
+
+app.post('/users', users.create);
 
 app.get('/user/profile',
     FacebookAuth.verifyAuth,
