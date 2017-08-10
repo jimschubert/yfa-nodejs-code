@@ -11,7 +11,8 @@ var express = require('express'),
     path = require('path'),
     passport = require('passport'),
     FacebookAuth = require('./FacebookAuth.js'),
-    User = require('./models/user');
+    User = require('./models/user'),
+    middleware = require('./middleware');
 
 var app = express();
 
@@ -31,6 +32,10 @@ FacebookAuth.call(null, passport);
 app.use(passport.initialize());
 app.use(passport.session());
 // end pasport init
+
+/* custom middlware needs to come before router */
+app.use(middleware.requestUri);
+app.use(middleware.responseProblem);
 
 app.use(app.router);
 app.use(express.static(path.join(__dirname, 'public')));

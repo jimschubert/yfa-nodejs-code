@@ -8,5 +8,7 @@ var HttpStatus = require('http-status');
  * @param res
  */
 exports.create = function (req, res) {
-    res.json(HttpStatus.METHOD_NOT_ALLOWED, { message: "Cannot create users." });
+    res.problem(HttpStatus.METHOD_NOT_ALLOWED,
+        "You're not allowed to create users on this system",
+        "Users are created via 3rd party (Facebook) authentication");
 };
