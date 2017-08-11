@@ -78,6 +78,7 @@ app.get('/login', page('login.html'));
 app.get('/logout', page('logout.html'));
 
 app.post('/users', users.create);
+app.get('/users', users.list);
 
 app.get('/user/profile',
     FacebookAuth.verifyAuth,

@@ -19,6 +19,24 @@ userSchema.static('fb',  function (id, cb) {
     return this.findOne({ facebookId: id }, cb);
 });
 
+userSchema.static('publicList',  function (skip, take, cb) {
+    skip = parseInt(skip, 10);
+    take = parseInt(take, 10);
+
+    if(isNaN(skip)){
+        skip = 0;
+    }
+
+    if(isNaN(take)) {
+        take = 25;
+    }
+
+    return this.find({}, 'username state', {
+        skip: Math.max(0, skip),
+        limit: Math.min(Math.max(1, take), 25)
+    }, cb);
+});
+
 var User = mongoose.model('User', userSchema);
 
 module.exports = exports = User;
