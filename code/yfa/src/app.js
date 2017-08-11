@@ -77,8 +77,10 @@ app.get('/authentication', page('authentication.html'));
 app.get('/login', page('login.html'));
 app.get('/logout', page('logout.html'));
 
-app.post('/users', users.create);
-app.get('/users', users.list);
+/* Users */
+var apiBase = '/api/v1';
+app.get(apiBase + '/users', middleware.requiresAuth, users.list);
+app.post(apiBase + '/users', middleware.requiresAuth, users.create);
 
 app.get('/user/profile',
     FacebookAuth.verifyAuth,
