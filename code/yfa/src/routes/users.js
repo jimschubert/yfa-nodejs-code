@@ -1,4 +1,4 @@
-"use strict";
+    "use strict";
 
 var HttpStatus = require('http-status');
 var User = require('../models/user');
@@ -36,5 +36,18 @@ exports.list = function (req, res) {
         } else {
             return res.json(HttpStatus.OK, results);
         }
+    });
+};
+
+/**
+ * Gets a user by ID
+ *
+ * @param req An express request object
+ * @param res An express response object
+ */
+exports.getById = function (req, res) {
+    // Example mongodb id: 52aff48d78b818c844000001
+    User.getById(req.params.mid, function(err, results){
+        res.json(HttpStatus.OK, results);
     });
 };

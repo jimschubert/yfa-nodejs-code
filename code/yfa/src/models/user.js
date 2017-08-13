@@ -6,8 +6,8 @@ var userSchema = new mongoose.Schema({
     facebookId: String,
     registrationDone: Boolean,
     username: String,
-    first_name: String,
-    last_name: String,
+    firstName: String,
+    lastName: String,
     email: String,
     state: { type: String, enum: enumValues },
     cohorts: []
@@ -36,6 +36,18 @@ userSchema.static('publicList',  function (skip, take, cb) {
         limit: Math.min(Math.max(1, take), 25)
     }, cb);
 });
+
+userSchema.static('getById', function(id, self, cb) {
+    if("function" !== typeof cb && "function" === typeof self){
+        cb = self;
+    }
+
+    var fields = self ?
+        null :
+        'username state firstName lastName email state cohorts';
+
+    return this.findOne({_id: id }, fields, null, cb);
+}); 
 
 var User = mongoose.model('User', userSchema);
 

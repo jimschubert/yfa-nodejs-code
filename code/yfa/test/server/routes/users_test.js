@@ -17,8 +17,8 @@ describe('users route', function () {
     function testUser(username, first, last, email, state, done) {
         var user = new User({
             username: username,
-            first_name: first,
-            last_name: last,
+            firstName: first,
+            lastName: last,
             email: email,
             state: state
         });
