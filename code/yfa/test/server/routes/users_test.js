@@ -140,11 +140,12 @@ describe('users route', function () {
             users.list(req, res);
         });
 
-        it('should return NO CONTENT when there are no results', function (done) {
+        it('should return empty array when there are no results', function (done) {
             User.remove({}, function(){
                 res.onResponse(function(){
-                    assert.equal(res.statusCode, HttpStatus.NO_CONTENT);
-
+                    assert.equal(res.statusCode, HttpStatus.OK);
+                    assert.ok(Array.isArray(res.actual));
+                    assert.equal(res.actual.length, 0);
                     done();
                 });
 
