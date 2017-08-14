@@ -1,4 +1,4 @@
-    "use strict";
+"use strict";
 
 var HttpStatus = require('http-status');
 var User = require('../models/user');
@@ -24,14 +24,14 @@ exports.create = function (req, res) {
  * @return {problem|null|object}
  */
 exports.list = function (req, res) {
-    User.publicList(req.query.skip, req.query.take, function(err, results){
-        if(err){
+    User.publicList(req.query.skip, req.query.take, function (err, results) {
+        if (err) {
             return res.problem(HttpStatus.INTERNAL_SERVER_ERROR,
                 "Unexpected problem",
                 "Could not list users due to internal error");
         }
 
-        if(results === null){
+        if (results === null) {
             return res.json(HttpStatus.NO_CONTENT);
         } else {
             return res.json(HttpStatus.OK, results);
@@ -47,7 +47,52 @@ exports.list = function (req, res) {
  */
 exports.getById = function (req, res) {
     // Example mongodb id: 52aff48d78b818c844000001
-    User.getById(req.params.mid, function(err, results){
+    User.getById(req.params.mid, function (err, results) {
         res.json(HttpStatus.OK, results);
+    });
+};
+
+exports.update = function (req, res) {
+    if (req.user._id.toString() !== req.params.mid) {
+        return res.problem(
+            HttpStatus.FORBIDDEN,
+            "You're not allowed to do that!",
+            "You can only update your own user information."
+        );
+    }
+
+    var upd = req.body;
+    User.fb(req.user.facebookId, function(err, user){
+        if(err || user === null) {
+            return res.problem(
+                HttpStatus.BAD_REQUEST,
+                "Could not save user information",
+                "There was an error processing the request to save your information"
+            );
+        }
+
+        // only new users can change their usernames
+        if (!user.registrationDone) {
+            // must start with a letter and be between 5 and 16 alphanumeric characters
+            if(/^[a-zA-Z]{1}[a-zA-Z0-9_]{4,15}$/.test(upd.username) === false) {
+                return res.problem(
+                    HttpStatus.BAD_REQUEST,
+                    "Invalid Username",
+                    "User names must be 5-16 characters"
+                );
+            }
+
+            user.username = upd.username;
+        }
+
+        user.registrationDone = true;
+        user.firstName = upd.firstName || user.firstName;
+        user.lastName = upd.lastName || user.lastName;
+        user.email = upd.email || user.email;
+        user.state = User.States.ONLINE;
+
+        user.save(function(err, user /*, numAffected */) {
+            res.json(HttpStatus.OK, user);
+        });
     });
 };

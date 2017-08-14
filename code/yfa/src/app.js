@@ -81,7 +81,6 @@ app.get('/logout', page('logout.html'));
 var apiBase = '/api/v1';
 app.get(apiBase + '/users', middleware.requiresAuth, users.list);
 app.post(apiBase + '/users', middleware.requiresAuth, users.create);
-
 app.param('mid', function(req,res,next,mid){
     mid = /^[a-z0-9]+$/.exec(String(mid));
     if (mid) {
@@ -95,6 +94,7 @@ app.param('mid', function(req,res,next,mid){
 });
 
 app.get(apiBase + '/users/:mid', middleware.requiresAuth, users.getById);
+app.put(apiBase + '/users/:mid', middleware.requiresAuth, users.update);
 
 app.get('/user/profile',
     FacebookAuth.verifyAuth,
