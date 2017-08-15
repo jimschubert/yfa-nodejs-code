@@ -52,15 +52,13 @@ exports.getById = function (req, res) {
     });
 };
 
+/**
+ * Updates a user (either new or existing)
+ *
+ * @param req An express request object
+ * @param res An express response object
+ */
 exports.update = function (req, res) {
-    if (req.user._id.toString() !== req.params.mid) {
-        return res.problem(
-            HttpStatus.FORBIDDEN,
-            "You're not allowed to do that!",
-            "You can only update your own user information."
-        );
-    }
-
     var upd = req.body;
     User.fb(req.user.facebookId, function(err, user){
         if(err || user === null) {
@@ -93,6 +91,27 @@ exports.update = function (req, res) {
 
         user.save(function(err, user /*, numAffected */) {
             res.json(HttpStatus.OK, user);
+        });
+    });
+};
+/**
+ * Deletes the account of the current user
+ *
+ * @param req An express request object
+ * @param res An express response object
+ */
+exports.delete = function (req, res) {
+    User.fb(req.user.facebookId, function(err, user) {
+        if (err || user === null) {
+            return res.problem(
+                HttpStatus.BAD_REQUEST,
+                "Could not delete user",
+                "There was an error processing the request to save your information"
+            );
+        }
+
+        return user.remove(function(err, result){
+            res.json(HttpStatus.OK, result);
         });
     });
 };

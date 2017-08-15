@@ -94,7 +94,16 @@ app.param('mid', function(req,res,next,mid){
 });
 
 app.get(apiBase + '/users/:mid', middleware.requiresAuth, users.getById);
-app.put(apiBase + '/users/:mid', middleware.requiresAuth, users.update);
+
+app.put(apiBase + '/users/:mid', 
+    middleware.requiresAuth, 
+    middleware.constrainToUserAction, 
+    users.update);
+
+app.delete(apiBase + '/users/:mid', 
+    middleware.requiresAuth, 
+    middleware.constrainToUserAction, 
+    users.delete);
 
 app.get('/user/profile',
     FacebookAuth.verifyAuth,
