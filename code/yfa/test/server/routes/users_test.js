@@ -20,71 +20,74 @@ describe('users route', function () {
             firstName: first,
             lastName: last,
             email: email,
-            state: state
+            state: state,
+            registrationDone: false
         });
-        user.save(function(err, doc){
+        user.save(function (err, doc) {
             return done(err, doc);
         });
     }
 
-    before(function(){
+    before(function () {
         db = connection();
     });
 
-    after(function(done){
+    after(function (done) {
         db.close(done);
     });
 
     beforeEach(function (done) {
         req = {
-            url        : '/api/v1/users',
-            baseUri    : function () {
+            url: '/api/v1/users',
+            baseUri: function () {
                 return "https://www.example.com";
             },
             absoluteUri: function () {
                 return req.baseUri() + req.url;
             },
-            query: {}
+            query: {},
+            params: {},
+            user: {}
         };
 
         // This is a mock response object that allows us to verify content
         // in an asynchronous way (json -> verify ---> test's done function)
         var newRes = {
-            onResponse: function(verify){
+            onResponse: function (verify) {
                 newRes.verify = verify;
             },
             actual: null,
             statusCode: 0,
-            json : function (num, obj) {
+            json: function (num, obj) {
                 newRes.statusCode = num;
                 newRes.actual = obj;
 
-                if("function" === typeof newRes.verify){
+                if ("function" === typeof newRes.verify) {
                     newRes.verify();
                 }
             },
             "set": function (headers) {
                 (headers || {}).should.eql({
-                    'Content-Type'    : 'application/problem+json',
+                    'Content-Type': 'application/problem+json',
                     'Content-Language': 'en'
                 });
             }
         };
         res = newRes;
 
-        middleware.responseProblem(req, res, function(){});
+        middleware.responseProblem(req, res, function () { });
 
         var tasks = [];
-        for(var i = 0; i < 102; i++){
-            tasks.push(async.apply(testUser,''+i,'Jim'+i, 'Schubert'+i, i+'@email.com', 'offline'));
+        for (var i = 0; i < 102; i++) {
+            tasks.push(async.apply(testUser, '' + i, 'Jim' + i, 'Schubert' + i, i + '@email.com', 'offline'));
         }
-        async.parallel(tasks, function(err, results){
+        async.parallel(tasks, function (err, results) {
             userCache = results;
             done();
         });
     });
 
-    afterEach(function(done){
+    afterEach(function (done) {
         userCache = [];
         User.remove({}, done);
     });
@@ -92,11 +95,11 @@ describe('users route', function () {
     describe('#create', function () {
         it('should return problem response (Method Not Allowed)', function () {
             var expected = {
-                "type"    : "https://www.example.com/probs/method-not-allowed",
-                "title"   : "You're not allowed to create users on this system",
-                "detail"  : "Users are created via 3rd party (Facebook) authentication",
+                "type": "https://www.example.com/probs/method-not-allowed",
+                "title": "You're not allowed to create users on this system",
+                "detail": "Users are created via 3rd party (Facebook) authentication",
                 "instance": req.absoluteUri(),
-                "status"  : HttpStatus.METHOD_NOT_ALLOWED
+                "status": HttpStatus.METHOD_NOT_ALLOWED
             };
 
             users.create(req, res);
@@ -109,7 +112,7 @@ describe('users route', function () {
 
     describe('#list', function () {
         it('should default to 25 results', function (done) {
-            res.onResponse(function(){
+            res.onResponse(function () {
                 assert.equal(res.statusCode, HttpStatus.OK);
 
                 assert.ok(Array.isArray(res.actual));
@@ -127,7 +130,7 @@ describe('users route', function () {
             // we can't verify against usernames because users are inserted in parallel.
             req.query.skip = '5';
             req.query.take = '20';
-            res.onResponse(function(){
+            res.onResponse(function () {
                 assert.equal(res.statusCode, HttpStatus.OK);
 
                 assert.ok(Array.isArray(res.actual));
@@ -141,8 +144,8 @@ describe('users route', function () {
         });
 
         it('should return empty array when there are no results', function (done) {
-            User.remove({}, function(){
-                res.onResponse(function(){
+            User.remove({}, function () {
+                res.onResponse(function () {
                     assert.equal(res.statusCode, HttpStatus.OK);
                     assert.ok(Array.isArray(res.actual));
                     assert.equal(res.actual.length, 0);
@@ -153,4 +156,78 @@ describe('users route', function () {
             });
         });
     });
+
+    describe('#delete', function () {
+        it('should error for invalid user facebook id (not :mid, can only delete own user record)', function (done) {
+            var expectedResponse = {
+                "type": "https://www.example.com/probs/bad-request",
+                "title": "Could not delete user",
+                "detail": "There was an error processing the request to save your information",
+                "instance": req.absoluteUri(),
+                "status": HttpStatus.BAD_REQUEST
+            };
+
+            req.user.facebookId = {};
+
+            res.onResponse(function () {
+                assert.equal(res.statusCode, HttpStatus.BAD_REQUEST);
+                assert.ok(Array.isArray(res.actual) === false);
+
+                res.actual.should.eql(expectedResponse);
+
+                done();
+            });
+
+            users.delete(req, res);
+        });
+
+        it('should error if :mid instead of facebookId was supplied', function (done) {
+            var expectedResponse = {
+                "type": "https://www.example.com/probs/bad-request",
+                "title": "Could not delete user",
+                "detail": "There was an error processing the request to save your information",
+                "instance": req.absoluteUri(),
+                "status": HttpStatus.BAD_REQUEST
+            };
+
+            User.findOne({}, function (err, doc) {
+                assert.ifError(err);
+                assert.ok(doc !== null);
+
+                req.user.facebookId = doc._id;
+
+                res.onResponse(function () {
+                    assert.equal(res.statusCode, HttpStatus.BAD_REQUEST);
+                    assert.ok(Array.isArray(res.actual) === false);
+
+                    res.actual.should.eql(expectedResponse);
+
+                    done();
+                });
+
+                users.delete(req, res);
+            });
+        });
+
+        it('should delete a user by facebookId', function (done) {
+            User.findOne({}, function (err, doc) {
+                assert.ifError(err);
+                assert.ok(doc !== null);
+
+                req.user.facebookId = doc.facebookId;
+
+                res.onResponse(function () {
+                    assert.equal(res.statusCode, HttpStatus.OK);
+                    assert.ok(Array.isArray(res.actual) === false);
+
+                    assert.ok(doc.equals(res.actual));
+
+                    done();
+                });
+
+                users.delete(req, res);
+            });
+        });
+    });
+
 });
