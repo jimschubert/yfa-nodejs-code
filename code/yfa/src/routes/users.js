@@ -94,6 +94,7 @@ exports.update = function (req, res) {
         });
     });
 };
+
 /**
  * Deletes the account of the current user
  *
@@ -113,5 +114,23 @@ exports.delete = function (req, res) {
         return user.remove(function(err, result){
             res.json(HttpStatus.OK, result);
         });
+    });
+};
+
+/**
+ * Gets messages for the logged in user
+ *
+ * @param req An express request object
+ * @param res An express response object
+ */
+exports.getMessages = function (req, res){
+    User.getMessages(req.params.mid, function(err,doc){
+        if (err || doc === null || doc.messages === null) {
+            return res.problem(
+              HttpStatus.NO_CONTENT
+            );
+        }
+
+        return res.json(HttpStatus.OK, doc);
     });
 };

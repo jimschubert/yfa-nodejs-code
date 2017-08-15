@@ -104,6 +104,11 @@ app.delete(apiBase + '/users/:mid',
     middleware.requiresAuth, 
     middleware.constrainToUserAction, 
     users.delete);
+    
+app.get(apiBase + '/users/:mid/messages', 
+    middleware.requiresAuth, 
+    middleware.constrainToUserAction,
+    users.getMessages); 
 
 app.get('/user/profile',
     FacebookAuth.verifyAuth,

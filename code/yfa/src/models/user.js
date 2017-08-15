@@ -10,8 +10,8 @@ var userSchema = new mongoose.Schema({
     lastName: String,
     email: String,
     state: { type: String, enum: enumValues },
-    cohorts: []
-    // TODO: messages
+    cohorts: [],
+    messages: []
     // TODO: images
 }, { collection: 'yfa' });
 
@@ -47,7 +47,11 @@ userSchema.static('getById', function(id, self, cb) {
         'username state firstName lastName email state cohorts';
 
     return this.findOne({_id: id }, fields, null, cb);
-}); 
+});
+
+userSchema.static('getMessages', function(id,cb){
+   return this.findOne({_id: id }, 'messages', null, cb);
+});
 
 var User = mongoose.model('User', userSchema);
 
