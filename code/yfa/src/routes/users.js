@@ -178,3 +178,25 @@ exports.addCohortForUser = function (req, res) {
         }
     });
 };
+
+/**
+ * Remove a single cohort from a user object.
+ *
+ * @param req
+ * @param res
+ */
+exports.removeCohortFromUser = function (req, res) {
+    User.removeCohort(req.params.mid, req.params.id, function (err, results) {
+        if (err) {
+            return res.problem(HttpStatus.INTERNAL_SERVER_ERROR,
+                "Unexpected problem",
+                "Could not remove cohort due to internal error");
+        }
+
+        if (results === null || results.length === 0) {
+            return res.json(HttpStatus.NO_CONTENT);
+        } else {
+            return res.json(HttpStatus.OK, results);
+        }
+    });
+};

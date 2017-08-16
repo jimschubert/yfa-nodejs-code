@@ -197,5 +197,33 @@ describe("User", function () {
             });
         });
 
+        describe('removeCohort', function () {
+            it('should remove a cohort by id', function (done) {
+                var user = users[5];
+                user.cohorts.push(users[2]._id);
+
+                user.save(function (err, result) {
+                    assert.ifError(err);
+
+                    User.removeCohort(users[5]._id, users[2]._id, function (err, results) {
+                        // note: results.cohorts is a mongoose array, not a standard array
+                        assert.ok(results != null, 'results should not be null');
+                        assert.ok(results.cohorts != null, 'results.cohorts should not be null');
+                        assert.equal(results.cohorts.length, 0, 'Expected cohorts to be empty');
+                        done();
+                    });
+                });
+            });
+
+            it('should not fail if there is no cohort to remove', function (done) {
+                User.removeCohort(users[5]._id, users[7]._id, function (err, results) {
+                    // note: results.cohorts is a mongoose array, not a standard array
+                    assert.ok(results != null, 'results should not be null');
+                    assert.ok(results.cohorts != null, 'results.cohorts should not be null');
+                    assert.equal(results.cohorts.length, 0, 'Expected cohorts to be empty');
+                    done();
+                });
+            });
+        });
     });
 });
