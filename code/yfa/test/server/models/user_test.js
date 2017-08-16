@@ -141,5 +141,39 @@ describe("User", function () {
                 });
             });
         });
+
+        describe('getCohortsById', function(){
+            it('should return empty array of cohorts when user has no cohorts', function(done){
+                var target = users[1];
+                User.getCohortsById(target._id, function(err, results){
+                    assert.ifError(err);
+
+                    // note: results.cohorts is a mongoose array, not a standard array
+                    assert.ok(results != null, 'results should not be null');
+                    assert.ok(results.cohorts != null, 'results.cohorts should not be null');
+                    assert.equal(results.cohorts.length, 0, 'Expected cohorts to be an empty array when user has no cohorts');
+                    done();
+                });
+            });
+
+            it('should return a populated array of cohorts when user has cohorts', function(done){
+                var user = users[3];
+                user.cohorts.push(users[4]._id);
+
+                user.save(function(err, result){
+                   assert.ifError(err);
+
+                    User.getCohortsById(user._id, function(err, results){
+                        // note: results.cohorts is a mongoose array, not a standard array
+                        assert.ok(results != null, 'results should not be null');
+                        assert.ok(results.cohorts != null, 'results.cohorts should not be null');
+                        assert.equal(results.cohorts.length, 1, 'Expected cohorts to contain one item');
+                        assert.ok(results.cohorts[0].equals(users[4]._id), 'Expected saved cohorts id to match');
+                        done();
+                    });
+                });
+            });
+        });
+
     });
 });

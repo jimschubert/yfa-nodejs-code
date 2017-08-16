@@ -59,10 +59,10 @@ var page = function (filename) {
 
 app.get('/auth/facebook',
     passport.authenticate('facebook', {
-            scope: 'email'
-        }
+        scope: 'email'
+    }
     ),
-    function(){ /* redirected before this executes */ }
+    function () { /* redirected before this executes */ }
 );
 
 app.get('/auth/facebook/callback',
@@ -81,7 +81,7 @@ app.get('/logout', page('logout.html'));
 var apiBase = '/api/v1';
 app.get(apiBase + '/users', middleware.requiresAuth, users.list);
 app.post(apiBase + '/users', middleware.requiresAuth, users.create);
-app.param('mid', function(req,res,next,mid){
+app.param('mid', function (req, res, next, mid) {
     mid = /^[a-z0-9]+$/.exec(String(mid));
     if (mid) {
         req.params['mid'] = mid[0];
@@ -95,20 +95,24 @@ app.param('mid', function(req,res,next,mid){
 
 app.get(apiBase + '/users/:mid', middleware.requiresAuth, users.getById);
 
-app.put(apiBase + '/users/:mid', 
-    middleware.requiresAuth, 
-    middleware.constrainToUserAction, 
+app.put(apiBase + '/users/:mid',
+    middleware.requiresAuth,
+    middleware.constrainToUserAction,
     users.update);
 
-app.delete(apiBase + '/users/:mid', 
-    middleware.requiresAuth, 
-    middleware.constrainToUserAction, 
-    users.delete);
-    
-app.get(apiBase + '/users/:mid/messages', 
-    middleware.requiresAuth, 
+app.delete(apiBase + '/users/:mid',
+    middleware.requiresAuth,
     middleware.constrainToUserAction,
-    users.getMessages); 
+    users.delete);
+
+app.get(apiBase + '/users/:mid/messages',
+    middleware.requiresAuth,
+    middleware.constrainToUserAction,
+    users.getMessages);
+
+app.get(apiBase + '/users/:mid/cohorts',
+    middleware.requiresAuth,
+    users.getCohortsById);
 
 app.get('/user/profile',
     FacebookAuth.verifyAuth,
@@ -120,7 +124,7 @@ app.post('/user/profile',
     FacebookAuth.verifyAuth,
     function (req, res, next) {
         var upd = req.body;
-        User.fb(req.user.facebookId, function(err, user){
+        User.fb(req.user.facebookId, function (err, user) {
             if (err) { return next(err); }
             if (user === null) {
                 // TODO: redirect to an "oops" page. 
@@ -140,7 +144,7 @@ app.post('/user/profile',
             user.email = upd.email || user.email;
             user.state = User.States.ONLINE;
 
-            user.save(function(err, user /*, numAffected */) {
+            user.save(function (err, user /*, numAffected */) {
                 // TODO: Handle database errors
                 res.render('profile', { user: user });
             });
@@ -154,8 +158,8 @@ app.get('/resources', resource.list);
 // If running from the command line, start the server
 if (module === require.main) {
     var connection = require('./db');
-    connection().on('connected', function(err){
-        if(err){
+    connection().on('connected', function (err) {
+        if (err) {
             process.stderr.write(err);
             process.exit(1);
         }

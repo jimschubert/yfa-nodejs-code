@@ -60,8 +60,8 @@ exports.getById = function (req, res) {
  */
 exports.update = function (req, res) {
     var upd = req.body;
-    User.fb(req.user.facebookId, function(err, user){
-        if(err || user === null) {
+    User.fb(req.user.facebookId, function (err, user) {
+        if (err || user === null) {
             return res.problem(
                 HttpStatus.BAD_REQUEST,
                 "Could not save user information",
@@ -72,7 +72,7 @@ exports.update = function (req, res) {
         // only new users can change their usernames
         if (!user.registrationDone) {
             // must start with a letter and be between 5 and 16 alphanumeric characters
-            if(/^[a-zA-Z]{1}[a-zA-Z0-9_]{4,15}$/.test(upd.username) === false) {
+            if (/^[a-zA-Z]{1}[a-zA-Z0-9_]{4,15}$/.test(upd.username) === false) {
                 return res.problem(
                     HttpStatus.BAD_REQUEST,
                     "Invalid Username",
@@ -89,7 +89,7 @@ exports.update = function (req, res) {
         user.email = upd.email || user.email;
         user.state = User.States.ONLINE;
 
-        user.save(function(err, user /*, numAffected */) {
+        user.save(function (err, user /*, numAffected */) {
             res.json(HttpStatus.OK, user);
         });
     });
@@ -102,7 +102,7 @@ exports.update = function (req, res) {
  * @param res An express response object
  */
 exports.delete = function (req, res) {
-    User.fb(req.user.facebookId, function(err, user) {
+    User.fb(req.user.facebookId, function (err, user) {
         if (err || user === null) {
             return res.problem(
                 HttpStatus.BAD_REQUEST,
@@ -111,7 +111,7 @@ exports.delete = function (req, res) {
             );
         }
 
-        return user.remove(function(err, result){
+        return user.remove(function (err, result) {
             res.json(HttpStatus.OK, result);
         });
     });
@@ -123,14 +123,36 @@ exports.delete = function (req, res) {
  * @param req An express request object
  * @param res An express response object
  */
-exports.getMessages = function (req, res){
-    User.getMessages(req.params.mid, function(err,doc){
+exports.getMessages = function (req, res) {
+    User.getMessages(req.params.mid, function (err, doc) {
         if (err || doc === null || doc.messages === null) {
             return res.problem(
-              HttpStatus.NO_CONTENT
+                HttpStatus.NO_CONTENT
             );
         }
 
         return res.json(HttpStatus.OK, doc);
+    });
+};
+
+/**
+ * Gets the list of cohorts for a user, given the user's id.
+ *
+ * @param req
+ * @param res
+ */
+exports.getCohortsById = function (req, res) {
+    User.getCohortsById(req.params.mid, function (err, results) {
+        if (err) {
+            return res.problem(HttpStatus.INTERNAL_SERVER_ERROR,
+                "Unexpected problem",
+                "Could not retrieve cohorts due to internal error");
+        }
+
+        if (results === null || results.length === 0) {
+            return res.json(HttpStatus.NO_CONTENT);
+        } else {
+            return res.json(HttpStatus.OK, results);
+        }
     });
 };
