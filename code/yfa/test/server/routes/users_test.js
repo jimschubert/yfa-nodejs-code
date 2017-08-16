@@ -272,4 +272,22 @@ describe('users route', function () {
         });
     });
 
+    describe('#addCohortForUser', function () {
+        it('should add a cohort to a user', function (done) {
+            req.params.mid = userCache[0]._id;
+            req.params.id = userCache[1]._id;
+
+            res.onResponse(function () {
+                assert.equal(res.statusCode, HttpStatus.OK);
+                assert.ok(Array.isArray(res.actual) === false);
+                assert.ok(Array.isArray(res.actual.cohorts));
+                assert.ok(res.actual.cohorts.length == 1);
+
+                assert.ok(res.actual.cohorts.indexOf(userCache[1]._id) > -1);
+                done();
+            });
+            users.addCohortForUser(req, res);
+        });
+    });
+
 });

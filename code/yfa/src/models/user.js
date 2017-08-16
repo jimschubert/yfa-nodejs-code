@@ -57,6 +57,12 @@ userSchema.static('getCohortsById', function(id, cb) {
 	return this.findOne({ _id: id }, 'cohorts', null, cb);
 });
 
+userSchema.static('addCohort', function (userId, cohortId, cb) {
+    return this.findOneAndUpdate({ _id: userId }, {
+        $push: { cohorts: cohortId }
+    }, cb);
+});
+
 var User = mongoose.model('User', userSchema);
 
 module.exports = exports = User;

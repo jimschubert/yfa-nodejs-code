@@ -156,3 +156,25 @@ exports.getCohortsById = function (req, res) {
         }
     });
 };
+
+/**
+ * Add a single cohort to a user object.
+ *
+ * @param req
+ * @param res
+ */
+exports.addCohortForUser = function (req, res) {
+    User.addCohort(req.params.mid, req.params.id, function (err, results) {
+        if (err) {
+            return res.problem(HttpStatus.INTERNAL_SERVER_ERROR,
+                "Unexpected problem",
+                "Could not save cohort due to internal error");
+        }
+
+        if (results === null || results.length === 0) {
+            return res.json(HttpStatus.NO_CONTENT);
+        } else {
+            return res.json(HttpStatus.OK, results);
+        }
+    });
+};
