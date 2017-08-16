@@ -124,6 +124,12 @@ app.delete(apiBase + '/users/:mid/cohorts/:id',
     middleware.constrainToUserAction,
     users.removeCohortFromUser);
 
+app.post(apiBase + '/cohorts/:id',
+    middleware.midFromQueryString('user_id'),
+    middleware.requiresAuth,
+    middleware.constrainToUserAction,
+    users.addCohortForUser);
+
 app.get('/user/profile',
     FacebookAuth.verifyAuth,
     function (req, res) {
