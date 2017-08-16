@@ -130,6 +130,12 @@ app.post(apiBase + '/cohorts/:id',
     middleware.constrainToUserAction,
     users.addCohortForUser);
 
+app.get(apiBase + '/cohorts',
+    middleware.midFromQueryString('user_id'),
+    middleware.requiresAuth,
+    middleware.constrainToUserAction,
+    users.getCohortsById);
+
 app.get('/user/profile',
     FacebookAuth.verifyAuth,
     function (req, res) {
