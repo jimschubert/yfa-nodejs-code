@@ -14,6 +14,14 @@ exports.send = function (req, res) {
         );
     }
 
+    if(!req.body){
+        return res.problem(
+            HttpStatus.BAD_REQUEST,
+            "Expected request body",
+            "Can't send and empty message"
+        );
+    }
+
     var message = req.body;
     message.to = to;
     message.from = from;
