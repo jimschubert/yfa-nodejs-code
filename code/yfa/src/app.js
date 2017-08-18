@@ -148,6 +148,10 @@ app.post(apiBase + '/messages',
     middleware.requiresAuth,
     messages.send);
 
+app.get(apiBase + '/messages/:mid/attachments',
+    middleware.requiresAuth,
+    messages.getAttachments);
+
 app.get('/user/profile',
     FacebookAuth.verifyAuth,
     function (req, res) {
