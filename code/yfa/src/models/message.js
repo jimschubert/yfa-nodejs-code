@@ -47,6 +47,17 @@ messageSchema.static('getAttachments', function (id, cb) {
         .exec(cb);
 });
 
+messageSchema.static('delete', function (id, cb) {
+    this.findByIdAndRemove(id, function (err) {
+        if (err) {
+            return cb(err, null);
+        }
+        User.findOneAndUpdate({ messages: id }, {
+            $pull: { messages: id }
+        }, cb);
+    });
+});
+
 var Message = mongoose.model('Message', messageSchema);
 
 module.exports = exports = Message;

@@ -152,6 +152,10 @@ app.get(apiBase + '/messages/:mid/attachments',
     middleware.requiresAuth,
     messages.getAttachments);
 
+app.delete(apiBase + '/messages/:mid',
+    middleware.requiresAuth,
+    messages.delete);
+
 app.get('/user/profile',
     FacebookAuth.verifyAuth,
     function (req, res) {

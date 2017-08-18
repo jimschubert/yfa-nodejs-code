@@ -45,3 +45,16 @@ exports.getAttachments = function (req, res) {
         return res.json(HttpStatus.OK, results);
     });
 };
+
+exports.delete = function (req, res) {
+    var id = req.params.mid;
+    Message.delete(id, function (err) {
+        if (err) {
+            return res.problem(HttpStatus.INTERNAL_SERVER_ERROR,
+                "Unexpected problem",
+                "Could not delete message due to internal error");
+        }
+
+        return res.json(HttpStatus.OK, {});
+    });
+};
