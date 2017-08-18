@@ -11,7 +11,7 @@ var userSchema = new mongoose.Schema({
     email: String,
     state: { type: String, enum: enumValues },
     cohorts: [ { type: mongoose.Schema.Types.ObjectId, ref: 'User' } ],
-    messages: []
+    messages: [ { type: mongoose.Schema.Types.ObjectId, ref: 'Message' } ]
     // TODO: images
 }, { collection: 'yfa' });
 

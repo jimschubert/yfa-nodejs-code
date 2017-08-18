@@ -6,6 +6,7 @@
 var express = require('express'),
     routes = require('./routes'),
     users = require('./routes/users'),
+    messages = require('./routes/messages'),
     resource = require('./routes/resource'),
     http = require('http'),
     path = require('path'),
@@ -141,6 +142,11 @@ app.delete(apiBase + '/cohorts/:id',
     middleware.requiresAuth,
     middleware.constrainToUserAction,
     users.removeCohortFromUser);
+
+app.post(apiBase + '/messages',
+    middleware.midFromQueryString('user_id'),
+    middleware.requiresAuth,
+    messages.send);
 
 app.get('/user/profile',
     FacebookAuth.verifyAuth,
