@@ -165,6 +165,10 @@ app.post(apiBase + '/images',
     middleware.requiresAuth,
     images.save);
 
+app.get(apiBase + '/images/:mid',
+    middleware.requiresAuth,
+    images.getById);
+
 app.get('/user/profile',
     FacebookAuth.verifyAuth,
     function (req, res) {

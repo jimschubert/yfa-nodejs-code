@@ -100,6 +100,71 @@ describe('images route', function () {
         });
     });
 
+    describe('#getById', function(){
+        it('should return no results when invalid id is passed', function(done){
+            req.params.mid = '53f401b2e9376594671c2b19';
+
+            res.onResponse(function(){
+                assert.equal(res.statusCode, HttpStatus.NO_CONTENT);
+                assert.equal(res.actual, null);
+                done();
+            });
+
+            images.getById(req, res);
+        });
+
+        it('should return result when valid id is passed', function(done){
+            var img = new Image({ dataURI: 'data:image/png;base64,R0lGODlhAQABAIAAAP///wAAACwAAAAAAQABAAACAkQBADs=' });
+            img.save(function(err, img){
+                assert.ifError(err);
+                req.params.mid = img._id;
+
+                res.onResponse(function(){
+                    assert.equal(res.statusCode, HttpStatus.OK);
+                    assert.ok(res.actual.equals(img));
+                    done();
+                });
+
+                images.getById(req, res);
+            });
+        });
+
+        it('should return a buffer of image when valid id is passed', function(done){
+            var base64 = 'R0lGODlhAQABAIAAAP///wAAACwAAAAAAQABAAACAkQBADs=';
+            var img = new Image({ dataURI: 'data:image/png;base64,'+base64 });
+            img.save(function(err, img){
+                assert.ifError(err);
+                req.params.mid = img._id;
+                req.query.d = 1;
+
+                res.onResponse(function(){
+                    // statusCode is set by express.js in this case (which we've mocked out)
+                    assert.equal(res.statusCode, 0);
+                    assert.ok(res.buffer instanceof Buffer);
+                    assert.equal(res.buffer.length, 35);
+                    assert.equal(res.buffer.toString('base64'), base64);
+                    assert.equal(res.headers.length, 3);
+                    assert.ok(res.headers.indexOf('Content-Length: 35') > -1);
+                    assert.ok(res.headers.indexOf('Content-Type: image/png') > -1);
+                    assert.ok(res.headers.indexOf('Content-Disposition: attachment; filename='+img._id.toString()+'.png') > -1);
+                    done();
+                });
+
+                images.getById(req, res);
+            });
+        });
+        
+        it('should return no content when no users have avatars', function(done){
+            res.onResponse(function(){
+                assert.equal(res.statusCode, HttpStatus.NO_CONTENT);
+                assert.equal(res.actual, null);
+                done();
+            });
+
+            images.getById(req, res);
+        });
+    });
+
     describe('#list', function(){
         it('should return a listing of user avatars', function(done){
             var img = new Image({ dataURI: 'data:image/png;base64,R0lGODlhAQABAIAAAP///wAAACwAAAAAAQABAAACAkQBADs=' });
