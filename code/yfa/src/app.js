@@ -7,6 +7,7 @@ var express = require('express'),
     routes = require('./routes'),
     users = require('./routes/users'),
     messages = require('./routes/messages'),
+    images = require('./routes/images'),
     resource = require('./routes/resource'),
     http = require('http'),
     path = require('path'),
@@ -23,7 +24,11 @@ app.set('views', __dirname + '/views');
 app.set('view engine', 'ejs');
 app.engine('html', require('ejs').renderFile);
 app.use(express.favicon());
-app.use(express.bodyParser());
+app.use(express.limit('2mb'));
+app.use(express.bodyParser({
+    uploadDir: path.join(__dirname, 'tmp'),
+    keepExtensions: true
+}));
 app.use(express.methodOverride());
 
 // passport init
@@ -155,6 +160,10 @@ app.get(apiBase + '/messages/:mid/attachments',
 app.delete(apiBase + '/messages/:mid',
     middleware.requiresAuth,
     messages.delete);
+
+app.post(apiBase + '/images',
+    middleware.requiresAuth,
+    images.save);
 
 app.get('/user/profile',
     FacebookAuth.verifyAuth,

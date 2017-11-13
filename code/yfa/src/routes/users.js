@@ -88,6 +88,7 @@ exports.update = function (req, res) {
         user.lastName = upd.lastName || user.lastName;
         user.email = upd.email || user.email;
         user.state = User.States.ONLINE;
+        user.avatar = upd.avatar;
 
         user.save(function (err, user /*, numAffected */) {
             res.json(HttpStatus.OK, user);

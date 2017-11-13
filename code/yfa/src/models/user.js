@@ -11,8 +11,8 @@ var userSchema = new mongoose.Schema({
     email: String,
     state: { type: String, enum: enumValues },
     cohorts: [ { type: mongoose.Schema.Types.ObjectId, ref: 'User' } ],
-    messages: [ { type: mongoose.Schema.Types.ObjectId, ref: 'Message' } ]
-    // TODO: images
+    messages: [ { type: mongoose.Schema.Types.ObjectId, ref: 'Message' } ],
+    avatar: { type:mongoose.Schema.Types.ObjectId, ref: 'Image'}
 }, { collection: 'yfa' });
 
 userSchema.static('fb',  function (id, cb) {
@@ -31,7 +31,7 @@ userSchema.static('publicList',  function (skip, take, cb) {
         take = 25;
     }
 
-    return this.find({}, 'username state', {
+    return this.find({}, 'username state avatar', {
         skip: Math.max(0, skip),
         limit: Math.min(Math.max(1, take), 25)
     }, cb);
