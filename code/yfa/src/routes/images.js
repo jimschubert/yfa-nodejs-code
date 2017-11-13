@@ -2,6 +2,7 @@
 
 var HttpStatus = require('http-status');
 var Img = require('../models/image');
+var User = require('../models/user');
 var fs = require('fs');
 var async = require('async');
 
@@ -40,5 +41,17 @@ exports.save = function(req, res){
         }
 
         return res.json(HttpStatus.OK, results);
+    });
+};
+
+exports.list = function(req, res){
+    User.avatarListing(function(err, results){
+        if(err){
+            return res.problem(HttpStatus.INTERNAL_SERVER_ERROR,
+                "Unexpected problem",
+                "Could not list images due to internal error");
+        }
+
+        return res.json(HttpStatus.OK, { images: results });
     });
 };

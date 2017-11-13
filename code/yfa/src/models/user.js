@@ -69,6 +69,15 @@ userSchema.static('removeCohort', function (userId, cohortId, cb) {
     }, cb);
 });
 
+userSchema.static('avatarListing', function(cb){
+    return this.aggregate(
+        { $match: { "avatar": { $exists: true } } },
+        {
+            $project: { _id: 0, image: "$avatar", "ref.user_id": "$_id" }
+        },
+    cb);
+});
+
 var User = mongoose.model('User', userSchema);
 
 module.exports = exports = User;
