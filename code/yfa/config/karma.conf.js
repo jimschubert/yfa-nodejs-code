@@ -18,16 +18,14 @@ module.exports = function (config) {
             'test/client/lib/angular/angular-mocks.js',
             'src/public/javascripts/vendor/bootstrap.min.js',
             'src/public/javascripts/vendor/modernizr-*.min.js',
-            'src/public/javascripts/vendor/ui-bootstrap-0.4.0.min.js',
-            'src/public/javascripts/vendor/ui-bootstrap-tpls-0.4.0.min.js',
+            'src/public/javascripts/vendor/ui-bootstrap-tpls-0.11.0.min.js',
             'src/public/javascripts/**/*.js',
             'test/client/unit/**/*.js'
         ],
 
         exclude: [
             'src/public/javascripts/vendor/angular/angular-scenario.js',
-            'src/public/javascripts/vendor/ui-bootstrap-0.4.0.js',
-            'src/public/javascripts/vendor/ui-bootstrap-tpls-0.4.0.js'
+            'src/public/javascripts/vendor/ui-bootstrap-tpls-0.11.0.js'
         ],
 
         autoWatch: true,

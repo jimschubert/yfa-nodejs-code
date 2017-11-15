@@ -10,7 +10,7 @@ describe('my app', function () {
 
     describe('home', function () {
         it('should display yfaChat in title', function(){
-            expect(element('a.brand:first').text()).
+            expect(element('a.navbar-brand:first').text()).
                 toMatch(/yfaChat/);
         });
     });

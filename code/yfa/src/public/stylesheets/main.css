@@ -19,14 +19,21 @@ a.facebook {
     overflow:hidden;
     background:url(../images/facebook.png) center no-repeat;
 }
-
-.welcome {
-    color: white;
-    margin:10px 0;
+.welcome span.glyphicon-off {
+    margin-left:2px;
 }
+
+.glyphicon-white {
+    color: #ffffff;
+}
+
+.navbar-form {
+    margin: 2px 0;
+}
+
 
 @media (min-width: 10px) and (max-width: 979px) {
  body {
-     padding-top:0px;
+     padding-top:60px;
  }
 }
