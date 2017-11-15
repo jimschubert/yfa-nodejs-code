@@ -206,7 +206,7 @@ app.post('/user/profile',
         });
     });
 
-// app.get('/', routes.index);
+app.get('/', routes.index);
 app.get('/compiled/*?', routes.partial);
 app.get('/resources', resource.list);
 
