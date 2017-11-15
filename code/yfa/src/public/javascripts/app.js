@@ -1,25 +1,20 @@
 // Declare app level module which depends on filters, and services
 angular.module('myApp', ['myApp.filters', 'myApp.services', 'myApp.directives', 'myApp.controllers', 'ui.bootstrap']).
     config(['$routeProvider', function ($routeProvider) {
-        "use strict";
+        'use strict';
 
         $routeProvider.when('/', {
             templateUrl: '/partials/index.html',
             controller: 'IndexCtrl'
         });
-        $routeProvider.when('/contact', {
-            templateUrl: '/partials/contact.html',
-            controller: 'PagesCtrl'
-        });
-        $routeProvider.when('/about', {
-            templateUrl: '/partials/about.html',
-            controller: 'PagesCtrl'
-        });
+
+        $routeProvider.otherwise({ redirectTo: '/' });
     }]);
 
-(function(){
+(function () {
+    'use strict';
     // fix the facebook bug which appends #_=_ to the end of the url on auth callback
-    if (window.location.hash && window.location.hash == '#_=_') {
+    if (window.location.hash && window.location.hash === '#_=_') {
         window.location.hash = '';
     }
 })();
