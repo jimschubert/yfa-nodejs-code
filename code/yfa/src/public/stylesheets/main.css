@@ -11,6 +11,19 @@ a {
     color: #00B7FF;
 }
 
+a.facebook {
+    display:block;
+    height:45px;
+    padding:0;
+    width:210px;
+    overflow:hidden;
+    background:url(../images/facebook.png) center no-repeat;
+}
+
+.welcome {
+    color: white;
+    margin:10px 0;
+}
 
 @media (min-width: 10px) and (max-width: 979px) {
  body {
