@@ -9,7 +9,7 @@
   "author": "",
   "license": "BSD",
   "devDependencies": {
-    "mongoose": "~3.6.20",
+    "mongoose": "~5.8.6",
     "async": "~0.2.9"
   }
 }
